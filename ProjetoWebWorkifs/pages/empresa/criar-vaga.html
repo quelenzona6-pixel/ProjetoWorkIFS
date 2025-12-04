@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Vaga - Workifs Empresa</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="home-empresa.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home-empresa.html">Minhas Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alertas-empresa.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeEmpresaNav">Empresa</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-empresa.html">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogarEmpresa()">Deslogar</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h3 class="card-title text-success mb-4 text-center">Criar Nova Vaga</h3>
+                        
+                        <form id="formCriarVaga" onsubmit="criarVaga(event)">
+                            <!-- Primeira Linha -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label for="cargo" class="form-label fw-semibold">Cargo</label>
+                                    <input type="text" class="form-control" id="cargo" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="nomeEmpresa" class="form-label fw-semibold">Nome da Empresa</label>
+                                    <input type="text" class="form-control" id="nomeEmpresa" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="area" class="form-label fw-semibold">Área</label>
+                                    <select class="form-select" id="area" required>
+                                        <option value="">Área de interesse</option>
+                                        <option value="Tecnologia">Tecnologia</option>
+                                        <option value="Saúde">Saúde</option>
+                                        <option value="Finanças">Finanças</option>
+                                        <option value="Engenharia">Engenharia</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Segunda Linha -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label for="tipoContrato" class="form-label fw-semibold">Tipo de contrato</label>
+                                    <select class="form-select" id="tipoContrato" required>
+                                        <option value="">Selecione</option>
+                                        <option value="Estágio">Estágio</option>
+                                        <option value="Jovem Aprendiz">Jovem Aprendiz</option>
+                                        <option value="Bolsista">Bolsista</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="turno" class="form-label fw-semibold">Turno</label>
+                                    <select class="form-select" id="turno" required>
+                                        <option value="">Selecione</option>
+                                        <option value="Manhã">Manhã</option>
+                                        <option value="Tarde">Tarde</option>
+                                        <option value="Noite">Noite</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tipoTrabalho" class="form-label fw-semibold">Tipo de trabalho</label>
+                                    <select class="form-select" id="tipoTrabalho" required>
+                                        <option value="">Selecione</option>
+                                        <option value="Home Office">Home Office</option>
+                                        <option value="Presencial">Presencial</option>
+                                        <option value="Híbrido">Híbrido</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Terceira Linha -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-12">
+                                    <label for="cidade" class="form-label fw-semibold">Local da vaga</label>
+                                    <select class="form-select" id="cidade" required>
+                                        <option value="">Cidade</option>
+                                        <option value="Curitiba">Curitiba</option>
+                                        <option value="Pinhais">Pinhais</option>
+                                        <option value="São Jose dos Pinhais">São Jose dos Pinhais</option>
+                                        <option value="Araucária">Araucária</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Descrição -->
+                            <div class="mb-3">
+                                <label for="descricao" class="form-label fw-semibold">Faça uma descrição sobre a vaga ofertada</label>
+                                <textarea class="form-control" id="descricao" rows="5" required></textarea>
+                            </div>
+
+                            <!-- Salário e Benefícios -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="salario" class="form-label fw-semibold">Valor da remuneração</label>
+                                    <input type="text" class="form-control" id="salario" placeholder="Ex: R$ 1.500" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold d-block">Selecione os principais benefícios</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Vale Refeição" id="benef1">
+                                        <label class="form-check-label" for="benef1">Vale Refeição</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Vale Alimentação" id="benef2">
+                                        <label class="form-check-label" for="benef2">Vale Alimentação</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Auxílio-transporte" id="benef3">
+                                        <label class="form-check-label" for="benef3">Auxílio-transporte</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Não possuo" id="benef4">
+                                        <label class="form-check-label" for="benef4">Não possuo</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botões -->
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" onclick="window.location.href='home-empresa.html'">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Criar Vaga
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verifica login e preenche nome da empresa
+        function verificarLogin() {
+            const empresa = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+            if (!empresa || !empresa.email) {
+                window.location.href = '../auth/login-empresa.html';
+                return false;
+            }
+            
+            const perfil = JSON.parse(localStorage.getItem('perfilEmpresa') || '{}');
+            const nomeEmpresa = perfil.nomeEmpresa || empresa.nomeEmpresa || 'Empresa';
+            
+            document.getElementById('nomeEmpresaNav').textContent = nomeEmpresa;
+            document.getElementById('nomeEmpresa').value = nomeEmpresa;
+            return true;
+        }
+
+        function deslogarEmpresa() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('empresaLogada');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        function criarVaga(event) {
+            event.preventDefault();
+
+            // Pega benefícios selecionados
+            const beneficios = [];
+            if (document.getElementById('benef1').checked) beneficios.push('Vale Refeição');
+            if (document.getElementById('benef2').checked) beneficios.push('Vale Alimentação');
+            if (document.getElementById('benef3').checked) beneficios.push('Auxílio-transporte');
+            if (document.getElementById('benef4').checked) beneficios.push('Não possuo');
+
+            // Cria objeto da vaga
+            const vaga = {
+                id: Date.now(), // ID único baseado em timestamp
+                cargo: document.getElementById('cargo').value,
+                nomeEmpresa: document.getElementById('nomeEmpresa').value,
+                area: document.getElementById('area').value,
+                tipoContrato: document.getElementById('tipoContrato').value,
+                turno: document.getElementById('turno').value,
+                tipoTrabalho: document.getElementById('tipoTrabalho').value,
+                cidade: document.getElementById('cidade').value,
+                descricao: document.getElementById('descricao').value,
+                salario: document.getElementById('salario').value,
+                beneficios: beneficios.join(', '),
+                dataCriacao: new Date().toISOString(),
+                status: 'ativa'
+            };
+
+            // Salva no localStorage
+            const vagas = JSON.parse(localStorage.getItem('vagasEmpresa') || '[]');
+            vagas.push(vaga);
+            localStorage.setItem('vagasEmpresa', JSON.stringify(vagas));
+
+            // Mostra mensagem de sucesso
+            alert('Vaga criada com sucesso!');
+            
+            // Redireciona para home
+            window.location.href = 'home-empresa.html';
+        }
+
+        // Inicializa
+        verificarLogin();
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

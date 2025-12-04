@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertas - Workifs Aluno</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="../../vagas.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../vagas.html">Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="alertas-aluno.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeUsuario">Aluno</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-aluno.html">Editar Perfil</a></li>
+                        <li><a class="dropdown-item" href="ver-curriculo-aluno.html">Ver Currículo</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogar()">Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-success mb-4">
+                    <i class="bi bi-bell"></i> Minhas Candidaturas
+                </h3>
+
+                <!-- Estatísticas -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card text-center shadow-sm">
+                            <div class="card-body">
+                                <h2 class="text-primary" id="totalCandidaturas">0</h2>
+                                <p class="text-muted mb-0">Total de Candidaturas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center shadow-sm">
+                            <div class="card-body">
+                                <h2 class="text-warning" id="totalPendentes">0</h2>
+                                <p class="text-muted mb-0">Em Análise</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center shadow-sm">
+                            <div class="card-body">
+                                <h2 class="text-success" id="totalAceitas">0</h2>
+                                <p class="text-muted mb-0">Aceitas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de candidaturas -->
+                <div id="listaCandidaturas">
+                    <!-- Candidaturas serão inseridas aqui via JavaScript -->
+                </div>
+
+                <!-- Mensagem quando não há candidaturas -->
+                <div id="semCandidaturas" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                    <p class="text-muted mt-3">Você ainda não se candidatou a nenhuma vaga.</p>
+                    <button class="btn btn-success mt-2" onclick="window.location.href='../../vagas.html'">
+                        <i class="bi bi-search"></i> Buscar Vagas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verifica login
+        function verificarLogin() {
+            const user = JSON.parse(localStorage.getItem('userLogado') || 'null');
+            if (!user || !user.email) {
+                alert('Você precisa fazer login para acessar esta página.');
+                window.location.href = '../auth/login.html';
+                return false;
+            }
+
+            const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            document.getElementById('nomeUsuario').textContent = perfil.nome || user.nome || 'Aluno';
+            return true;
+        }
+
+        function deslogar() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('userLogado');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        function carregarCandidaturas() {
+            const userLogado = JSON.parse(localStorage.getItem('userLogado') || '{}');
+            const candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+            
+            // Filtra candidaturas do usuário logado
+            const minhasCandidaturas = candidaturas.filter(c => c.emailAluno === userLogado.email);
+            
+            // Atualiza estatísticas
+            const totalCandidaturas = minhasCandidaturas.length;
+            const totalAceitas = minhasCandidaturas.filter(c => c.status === 'aceita').length;
+            const totalPendentes = minhasCandidaturas.filter(c => c.status === 'enviada').length;
+
+            document.getElementById('totalCandidaturas').textContent = totalCandidaturas;
+            document.getElementById('totalAceitas').textContent = totalAceitas;
+            document.getElementById('totalPendentes').textContent = totalPendentes;
+
+            const container = document.getElementById('listaCandidaturas');
+            const semCandidaturas = document.getElementById('semCandidaturas');
+
+            if (minhasCandidaturas.length === 0) {
+                container.innerHTML = '';
+                semCandidaturas.style.display = 'block';
+                return;
+            }
+
+            semCandidaturas.style.display = 'none';
+            
+            // Ordena por data (mais recente primeiro)
+            minhasCandidaturas.sort((a, b) => new Date(b.dataCandidatura) - new Date(a.dataCandidatura));
+
+            let html = '';
+            minhasCandidaturas.forEach(candidatura => {
+                const dataFormatada = new Date(candidatura.dataCandidatura).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                const statusInfo = getStatusInfo(candidatura.status);
+
+                html += `
+                    <div class="card mb-3 shadow-sm hover-card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-1 text-center">
+                                    <i class="bi bi-briefcase-fill ${statusInfo.color}" style="font-size: 2.5rem;"></i>
+                                </div>
+                                <div class="col-md-8">
+                                    <h5 class="mb-1">${candidatura.vagaTitulo || 'Vaga'}</h5>
+                                    <p class="mb-1 text-muted small">
+                                        <i class="bi bi-building"></i> ${candidatura.vagaEmpresa || 'Empresa'}
+                                    </p>
+                                    <p class="mb-0 text-muted small">
+                                        <i class="bi bi-calendar"></i> Candidatura enviada em: ${dataFormatada}
+                                    </p>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <span class="badge ${statusInfo.badge} mb-2 d-block">${statusInfo.text}</span>
+                                    ${candidatura.status === 'aceita' ? 
+                                        `<small class="text-success d-block">
+                                            <i class="bi bi-check-circle-fill"></i> Parabéns! 
+                                        </small>` : 
+                                        `<small class="text-muted d-block">Aguardando resposta</small>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getStatusInfo(status) {
+            switch(status) {
+                case 'aceita':
+                    return {
+                        text: 'Candidatura Aceita',
+                        badge: 'bg-success',
+                        color: 'text-success'
+                    };
+                case 'enviada':
+                    return {
+                        text: 'Em Análise',
+                        badge: 'bg-warning',
+                        color: 'text-warning'
+                    };
+                case 'recusada':
+                    return {
+                        text: 'Não selecionado',
+                        badge: 'bg-secondary',
+                        color: 'text-secondary'
+                    };
+                default:
+                    return {
+                        text: 'Pendente',
+                        badge: 'bg-info',
+                        color: 'text-info'
+                    };
+            }
+        }
+
+        // Inicializa
+        if (verificarLogin()) {
+            carregarCandidaturas();
+            
+            // Atualiza a cada 30 segundos
+            setInterval(carregarCandidaturas, 30000);
+        }
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

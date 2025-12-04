@@ -1,0 +1,331 @@
+/* barra branca com logo à esquerda, filtros no centro e login à direita */
+    .spacer-bar {
+        height: 66px;
+        width: 100%;
+        background: #ffffff;
+        border-bottom: 1px solid #d1d1d1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-sizing: border-box;
+        gap: 16px;
+    }
+
+    .spacer-bar .logo {
+        height: 46px;
+        width: auto;
+        display: block;
+        flex: 0 0 auto;
+    }
+
+    .spacer-bar .center-filters {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        align-items: center;
+        flex: 1 1 auto; /* ocupa espaço central */
+    }
+
+    .spacer-bar select {
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background: #fff;
+        appearance: none;
+        min-width: 220px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .btn-login {
+        height: 34px;
+        padding: 0 18px;
+        font-size: 14px;
+        background: linear-gradient(#47c36f, #2e7d32);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        cursor: pointer;
+        flex: 0 0 auto;
+    }
+
+    @media (max-width: 880px) {
+        .spacer-bar {
+            flex-direction: column;
+            height: auto;
+            padding: 10px;
+            align-items: stretch;
+        }
+        .spacer-bar .center-filters {
+            order: 2;
+            width: 100%;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 8px 0;
+        }
+        .spacer-bar .logo {
+            order: 1;
+            margin-bottom: 6px;
+            align-self: flex-start;
+        }
+        .btn-login {
+            order: 3;
+            align-self: flex-end;
+        }
+        .spacer-bar select { min-width: 140px; width: 48%; }
+    }
+
+    @media (max-width: 480px) {
+        .spacer-bar select { width: 100%; min-width: auto; }
+        .spacer-bar .center-filters { flex-direction: column; gap: 8px; }
+    }
+        /* fallback / garantia visual caso style.css não carregue */
+        .topo {
+            height: 56px;
+            width: 100%;
+            background: linear-gradient(to right, #1e9555 , #0bfa79);
+            box-sizing: border-box;
+        }
+        .spacer-bar {
+            height: 66px;
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 1px solid #d1d1d1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            gap: 16px;
+        }
+        .spacer-bar .logo { height: 46px; width: auto; display: block; flex: 0 0 auto; }
+        .spacer-bar .center-filters {
+            display: flex; gap: 12px; justify-content: center; align-items: center; flex: 1 1 auto;
+        }
+        .spacer-bar select {
+            padding: 8px 10px; font-size: 14px; border-radius: 6px; border: 1px solid #ccc;
+            background: #fff; min-width: 200px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .btn-login {
+            height: 34px; padding: 0 18px; font-size: 14px;
+            background: linear-gradient(#47c36f, #2e7d32); color:#fff; font-weight:600;
+            border:none; border-radius:0; box-shadow:0 4px 10px rgba(0,0,0,0.12); cursor:pointer; flex:0 0 auto;
+        }
+        .header-vagas { background:#2e7d32; color:#fff; padding:12px 20px; font-weight:600; }
+        .vagas-container { max-width:1200px; margin:30px auto; padding:0 24px; }
+        .vaga-card { background:#fff; border:1px solid #e0e0e0; padding:32px; margin-bottom:28px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.08);}
+        .vaga-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 14px;
+            align-items: flex-start;
+        }
+
+        /* primeira coluna: cargo e empresa (ocupa 1 coluna) */
+        .vaga-header > div:first-child {
+            grid-column: 1;
+        }
+
+        /* próximas 3 colunas: Cidade, Turno, Salário (ocupam 3 colunas) */
+        .vaga-header > div:nth-child(2),
+        .vaga-header > div:nth-child(3),
+        .vaga-header > div:nth-child(4) {
+            grid-column: auto;
+        }
+
+        .vaga-title { font-size:28px; font-weight:700; color:#1a1a1a; margin-bottom:16px; line-height:1.3; }
+        .vaga-field-title { font-size:12px; color:#666; font-weight:600; margin-bottom:6px; text-transform:uppercase; }
+        .vaga-field-content { background:#c8e6c9; padding:10px; border-radius:4px; display:flex; gap:8px; align-items:center; }
+        .vaga-body { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:12px; }
+        .vaga-actions { display:flex; justify-content:flex-end; margin-top:20px; }
+        .btn-candidatar { height: 34px; padding: 0 24px; font-size: 14px; background: #2196F3; color: #fff; font-weight: 600; border: none; border-radius: 0; box-shadow: 0 4px 10px rgba(33, 150, 243, 0.12); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .btn-candidatar:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(33, 150, 243, 0.18); }
+        .vaga-info-linha {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 8px;
+            font-size: 17px;
+            color: #444;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #1a1a1a;
+            font-size: 17px;
+        }
+
+        /* 3 blocos verdes em destaque */
+        .vaga-blocos-destaque {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .bloco-verde {
+            background: #c8e6c9;
+            padding: 20px 16px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .bloco-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1b5e20;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        .bloco-valor {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1b5e20;
+            line-height: 1.4;
+        }
+
+        /* Tipo de trabalho */
+        .vaga-tipo-trabalho {
+            display: flex;
+            gap: 8px;
+            font-size: 17px;
+            color: #444;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        /* Grade: Benefícios | Descrição */
+        .vaga-detalhes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 24px;
+        }
+
+        .detalhe-col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detalhe-titulo {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detalhe-texto {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        /* Header de resultados */
+        .header-vagas {
+            background: #2e7d32;
+            color: #fff;
+            padding: 16px 24px;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        /* Chips de sugestão */
+        .chip-group { 
+          display: flex; 
+          flex-wrap: wrap; 
+          gap: 10px; 
+          margin-top: 12px; 
+        }
+
+        .chip {
+          background: #e8f5e9;
+          color: #2e7d32;
+          border: 1px solid #c8e6c9;
+          padding: 10px 16px;
+          border-radius: 24px;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .chip:hover { 
+          background: #c8e6c9;
+          transform: translateY(-2px);
+        }
+
+        .chip-muted { 
+          background: #f5f5f5; 
+          color: #666; 
+          border-color: #e0e0e0; 
+          cursor: default; 
+        }
+
+        .chip-action { 
+          background: #2196f3; 
+          color: #fff; 
+          border-color: #1976d2; 
+        }
+
+        .chip-action:hover { 
+          background: #1976d2;
+        }
+
+        /* Responsivo */
+        @media (max-width: 992px) {
+          .vaga-title {
+            font-size: 24px;
+          }
+          .info-item, .info-label, .vaga-tipo-trabalho {
+            font-size: 16px;
+          }
+          .bloco-valor {
+            font-size: 16px;
+          }
+          .detalhe-texto {
+            font-size: 15px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .vaga-card {
+            padding: 24px 20px;
+          }
+          .vaga-title {
+            font-size: 22px;
+          }
+          .vaga-blocos-destaque {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+          .vaga-detalhes-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+          .vaga-info-linha {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .info-item, .info-label, .vaga-tipo-trabalho {
+            font-size: 15px;
+          }
+          .detalhe-texto {
+            font-size: 14px;
+          }
+        }

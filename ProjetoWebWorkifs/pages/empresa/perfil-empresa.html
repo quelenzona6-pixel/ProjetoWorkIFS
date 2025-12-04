@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil da Empresa - Workifs</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="home-empresa.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home-empresa.html">Minhas Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alertas-empresa.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeEmpresaNav">Empresa</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-empresa.html">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogarEmpresa()">Deslogar</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <!-- Header com foto -->
+                        <div class="text-center mb-4">
+                            <div class="position-relative d-inline-block">
+                                <img src="https://via.placeholder.com/150" class="rounded-circle border border-success border-3" 
+                                     style="width: 150px; height: 150px; object-fit: cover;" 
+                                     alt="Logo Empresa" id="fotoEmpresa">
+                                <button class="btn btn-sm btn-success rounded-circle position-absolute bottom-0 end-0" 
+                                        style="width: 40px; height: 40px;">
+                                    <i class="bi bi-camera"></i>
+                                </button>
+                            </div>
+                            <h3 class="mt-3 mb-1" id="nomeEmpresaTitulo">Nome da Empresa</h3>
+                            <p class="text-muted" id="cnpjTitulo">CNPJ: 00.000.000/0000-00</p>
+                        </div>
+
+                        <!-- Tabs de navegação -->
+                        <ul class="nav nav-tabs mb-4" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dadosGerais" type="button">
+                                    Dados Gerais
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#contato" type="button">
+                                    Contato
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#sobre" type="button">
+                                    Sobre a Empresa
+                                </button>
+                            </li>
+                        </ul>
+
+                        <!-- Conteúdo das tabs -->
+                        <div class="tab-content">
+                            <!-- Tab Dados Gerais -->
+                            <div class="tab-pane fade show active" id="dadosGerais" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-success">Dados Gerais</h5>
+                                    <button class="btn btn-outline-success btn-sm" onclick="editarDadosGerais()">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Nome da Empresa</label>
+                                        <p class="fw-semibold" id="viewNomeEmpresa">-</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">CNPJ</label>
+                                        <p class="fw-semibold" id="viewCnpj">-</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Razão Social</label>
+                                        <p class="fw-semibold" id="viewRazaoSocial">-</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Setor de Atuação</label>
+                                        <p class="fw-semibold" id="viewSetor">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Contato -->
+                            <div class="tab-pane fade" id="contato" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-success">Informações de Contato</h5>
+                                    <button class="btn btn-outline-success btn-sm" onclick="editarContato()">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Email</label>
+                                        <p class="fw-semibold" id="viewEmail">-</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Telefone</label>
+                                        <p class="fw-semibold" id="viewTelefone">-</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Site</label>
+                                        <p class="fw-semibold" id="viewSite">-</p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Cidade</label>
+                                        <p class="fw-semibold" id="viewCidade">-</p>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label text-muted small">Endereço</label>
+                                        <p class="fw-semibold" id="viewEndereco">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Sobre -->
+                            <div class="tab-pane fade" id="sobre" role="tabpanel">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-success">Sobre a Empresa</h5>
+                                    <button class="btn btn-outline-success btn-sm" onclick="editarSobre()">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p id="viewDescricao" style="white-space: pre-wrap;">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Dados Gerais -->
+    <div class="modal fade" id="modalEditarDadosGerais" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Editar Dados Gerais</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formDadosGerais">
+                        <div class="mb-3">
+                            <label for="editNomeEmpresa" class="form-label">Nome da Empresa</label>
+                            <input type="text" class="form-control" id="editNomeEmpresa" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCnpj" class="form-label">CNPJ</label>
+                            <input type="text" class="form-control" id="editCnpj" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRazaoSocial" class="form-label">Razão Social</label>
+                            <input type="text" class="form-control" id="editRazaoSocial">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSetor" class="form-label">Setor de Atuação</label>
+                            <select class="form-select" id="editSetor">
+                                <option value="">Selecione</option>
+                                <option value="Tecnologia">Tecnologia</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Finanças">Finanças</option>
+                                <option value="Engenharia">Engenharia</option>
+                                <option value="Educação">Educação</option>
+                                <option value="Varejo">Varejo</option>
+                                <option value="Serviços">Serviços</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="salvarDadosGerais()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Contato -->
+    <div class="modal fade" id="modalEditarContato" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Editar Informações de Contato</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formContato">
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTelefone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="editTelefone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSite" class="form-label">Site</label>
+                            <input type="url" class="form-control" id="editSite" placeholder="https://www.exemplo.com.br">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCidade" class="form-label">Cidade</label>
+                            <select class="form-select" id="editCidade">
+                                <option value="">Selecione</option>
+                                <option value="Curitiba">Curitiba</option>
+                                <option value="Pinhais">Pinhais</option>
+                                <option value="São Jose dos Pinhais">São Jose dos Pinhais</option>
+                                <option value="Araucária">Araucária</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEndereco" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="editEndereco" placeholder="Rua, número, bairro">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="salvarContato()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Sobre -->
+    <div class="modal fade" id="modalEditarSobre" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Editar Sobre a Empresa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formSobre">
+                        <div class="mb-3">
+                            <label for="editDescricao" class="form-label">Descrição da Empresa</label>
+                            <textarea class="form-control" id="editDescricao" rows="8" 
+                                      placeholder="Conte sobre sua empresa, sua história, missão, valores..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="salvarSobre()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let perfil = {};
+        let modalDadosGerais, modalContato, modalSobre;
+
+        // Verifica login
+        function verificarLogin() {
+            const empresa = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+            if (!empresa || !empresa.email) {
+                window.location.href = '../auth/login-empresa.html';
+                return false;
+            }
+            return true;
+        }
+
+        function deslogarEmpresa() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('empresaLogada');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        // Carrega perfil
+        function carregarPerfil() {
+            const empresa = JSON.parse(localStorage.getItem('empresaLogada'));
+            perfil = JSON.parse(localStorage.getItem('perfilEmpresa') || '{}');
+
+            // Preenche dados padrão se não existir
+            if (!perfil.nomeEmpresa) {
+                perfil.nomeEmpresa = empresa.nomeEmpresa || 'Minha Empresa';
+                perfil.email = empresa.email || '';
+                perfil.cnpj = '';
+                perfil.razaoSocial = '';
+                perfil.setor = '';
+                perfil.telefone = '';
+                perfil.site = '';
+                perfil.cidade = '';
+                perfil.endereco = '';
+                perfil.descricao = '';
+            }
+
+            // Atualiza interface
+            document.getElementById('nomeEmpresaNav').textContent = perfil.nomeEmpresa;
+            document.getElementById('nomeEmpresaTitulo').textContent = perfil.nomeEmpresa;
+            document.getElementById('cnpjTitulo').textContent = 'CNPJ: ' + (perfil.cnpj || '00.000.000/0000-00');
+
+            // Tab Dados Gerais
+            document.getElementById('viewNomeEmpresa').textContent = perfil.nomeEmpresa || '-';
+            document.getElementById('viewCnpj').textContent = perfil.cnpj || '-';
+            document.getElementById('viewRazaoSocial').textContent = perfil.razaoSocial || '-';
+            document.getElementById('viewSetor').textContent = perfil.setor || '-';
+
+            // Tab Contato
+            document.getElementById('viewEmail').textContent = perfil.email || '-';
+            document.getElementById('viewTelefone').textContent = perfil.telefone || '-';
+            document.getElementById('viewSite').textContent = perfil.site || '-';
+            document.getElementById('viewCidade').textContent = perfil.cidade || '-';
+            document.getElementById('viewEndereco').textContent = perfil.endereco || '-';
+
+            // Tab Sobre
+            document.getElementById('viewDescricao').textContent = perfil.descricao || 'Nenhuma descrição adicionada ainda.';
+        }
+
+        // Funções de Edição - Dados Gerais
+        function editarDadosGerais() {
+            document.getElementById('editNomeEmpresa').value = perfil.nomeEmpresa || '';
+            document.getElementById('editCnpj').value = perfil.cnpj || '';
+            document.getElementById('editRazaoSocial').value = perfil.razaoSocial || '';
+            document.getElementById('editSetor').value = perfil.setor || '';
+            modalDadosGerais.show();
+        }
+
+        function salvarDadosGerais() {
+            perfil.nomeEmpresa = document.getElementById('editNomeEmpresa').value;
+            perfil.cnpj = document.getElementById('editCnpj').value;
+            perfil.razaoSocial = document.getElementById('editRazaoSocial').value;
+            perfil.setor = document.getElementById('editSetor').value;
+
+            localStorage.setItem('perfilEmpresa', JSON.stringify(perfil));
+            carregarPerfil();
+            modalDadosGerais.hide();
+        }
+
+        // Funções de Edição - Contato
+        function editarContato() {
+            document.getElementById('editEmail').value = perfil.email || '';
+            document.getElementById('editTelefone').value = perfil.telefone || '';
+            document.getElementById('editSite').value = perfil.site || '';
+            document.getElementById('editCidade').value = perfil.cidade || '';
+            document.getElementById('editEndereco').value = perfil.endereco || '';
+            modalContato.show();
+        }
+
+        function salvarContato() {
+            perfil.email = document.getElementById('editEmail').value;
+            perfil.telefone = document.getElementById('editTelefone').value;
+            perfil.site = document.getElementById('editSite').value;
+            perfil.cidade = document.getElementById('editCidade').value;
+            perfil.endereco = document.getElementById('editEndereco').value;
+
+            localStorage.setItem('perfilEmpresa', JSON.stringify(perfil));
+            carregarPerfil();
+            modalContato.hide();
+        }
+
+        // Funções de Edição - Sobre
+        function editarSobre() {
+            document.getElementById('editDescricao').value = perfil.descricao || '';
+            modalSobre.show();
+        }
+
+        function salvarSobre() {
+            perfil.descricao = document.getElementById('editDescricao').value;
+
+            localStorage.setItem('perfilEmpresa', JSON.stringify(perfil));
+            carregarPerfil();
+            modalSobre.hide();
+        }
+
+        // Inicialização
+        if (verificarLogin()) {
+            carregarPerfil();
+            
+            // Inicializa modais Bootstrap
+            modalDadosGerais = new bootstrap.Modal(document.getElementById('modalEditarDadosGerais'));
+            modalContato = new bootstrap.Modal(document.getElementById('modalEditarContato'));
+            modalSobre = new bootstrap.Modal(document.getElementById('modalEditarSobre'));
+        }
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

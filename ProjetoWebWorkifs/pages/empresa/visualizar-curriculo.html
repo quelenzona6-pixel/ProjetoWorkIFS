@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículo do Candidato - Workifs Empresa</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .curriculo-section {
+            background: #f8f9fa;
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        .curriculo-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .curriculo-item:last-child {
+            border-bottom: none;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            .barra-verde-topo {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo no-print"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm no-print">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="home-empresa.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home-empresa.html">Minhas Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alertas-empresa.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeEmpresaNav">Empresa</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-empresa.html">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogarEmpresa()">Deslogar</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Botões de ação -->
+                <div class="d-flex justify-content-between mb-4 no-print">
+                    <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success" id="btnAceitar" onclick="aceitarCandidatura()">
+                            <i class="bi bi-check-circle"></i> Aceitar Candidatura
+                        </button>
+                        <button class="btn btn-outline-success" onclick="entrarEmContato()">
+                            <i class="bi bi-envelope"></i> Entrar em Contato
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card do Currículo -->
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <!-- Cabeçalho com foto e dados principais -->
+                        <div class="text-center mb-5">
+                            <img src="https://via.placeholder.com/120" class="rounded-circle border border-success border-3 mb-3" 
+                                 style="width: 120px; height: 120px; object-fit: cover;" 
+                                 alt="Foto" id="fotoCandidato">
+                            <h2 class="mb-2" id="nomeCandidato">Nome do Candidato</h2>
+                            <p class="text-muted mb-1" id="emailCandidato">email@exemplo.com</p>
+                        </div>
+
+                        <!-- Informações Pessoais -->
+                        <div class="curriculo-section">
+                            <h4 class="text-success mb-3">
+                                <i class="bi bi-person-fill"></i> Informações Pessoais
+                            </h4>
+                            <div class="mb-3">
+                                <strong>Nome Completo:</strong>
+                                <p id="nomeCompleto" class="mb-2">-</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Email:</strong>
+                                <p id="emailPessoal" class="mb-2">-</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Sobre Você:</strong>
+                                <p id="sobreVoce" class="mb-0">-</p>
+                            </div>
+                        </div>
+
+                        <!-- Dados Acadêmicos -->
+                        <div class="curriculo-section">
+                            <h4 class="text-success mb-3">
+                                <i class="bi bi-mortarboard-fill"></i> Dados Acadêmicos
+                            </h4>
+                            <div class="mb-3">
+                                <strong>Faculdade:</strong>
+                                <p id="faculdade" class="mb-2">-</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Curso:</strong>
+                                <p id="curso" class="mb-2">-</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Semestre Atual:</strong>
+                                <p id="semestre" class="mb-2">-</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Previsão de Conclusão:</strong>
+                                <p id="conclusao" class="mb-0">-</p>
+                            </div>
+                        </div>
+
+                        <!-- Experiência Profissional -->
+                        <div class="curriculo-section">
+                            <h4 class="text-success mb-3">
+                                <i class="bi bi-briefcase-fill"></i> Experiência Profissional
+                            </h4>
+                            <div class="mb-3">
+                                <strong>Tem experiência?</strong>
+                                <p id="temExperiencia" class="mb-2">-</p>
+                            </div>
+                            <div id="detalhesExperiencia" class="d-none">
+                                <div class="mb-3">
+                                    <strong>Está trabalhando atualmente?</strong>
+                                    <p id="trabalhando" class="mb-2">-</p>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Qual sua experiência?</strong>
+                                    <p id="qualExperiencia" class="mb-0">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verifica login da empresa
+        function verificarLogin() {
+            const empresa = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+            if (!empresa || !empresa.email) {
+                alert('Acesso negado. Faça login como empresa.');
+                window.location.href = '../auth/login-empresa.html';
+                return false;
+            }
+            
+            const perfil = JSON.parse(localStorage.getItem('perfilEmpresa') || '{}');
+            const nomeEmpresa = perfil.nomeEmpresa || empresa.nomeEmpresa || 'Empresa';
+            document.getElementById('nomeEmpresaNav').textContent = nomeEmpresa;
+            return true;
+        }
+
+        function deslogarEmpresa() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('empresaLogada');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        // Carrega currículo do candidato
+        function carregarCurriculo() {
+            const emailCandidato = new URLSearchParams(window.location.search).get('email');
+            
+            if (!emailCandidato) {
+                alert('Candidato não encontrado.');
+                window.history.back();
+                return;
+            }
+
+            // Busca dados do aluno no localStorage
+            const candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+            const candidatura = candidaturas.find(c => c.emailAluno === emailCandidato);
+
+            if (!candidatura) {
+                alert('Dados do candidato não encontrados.');
+                window.history.back();
+                return;
+            }
+
+            // Tenta buscar perfil completo do aluno
+            // Nota: Como usamos apenas um perfilAluno no localStorage, isso só funciona se o aluno logado for o mesmo
+            // Em uma aplicação real, teríamos um banco de dados com todos os perfis
+            const perfilAluno = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            
+            // Dados do cabeçalho
+            document.getElementById('nomeCandidato').textContent = perfilAluno.nome || candidatura.nomeAluno || 'Candidato';
+            document.getElementById('emailCandidato').textContent = candidatura.emailAluno || '-';
+
+            // Informações Pessoais
+            document.getElementById('nomeCompleto').textContent = perfilAluno.nome || candidatura.nomeAluno || '-';
+            document.getElementById('emailPessoal').textContent = candidatura.emailAluno || '-';
+            document.getElementById('sobreVoce').textContent = perfilAluno.sobre || 'Não informado';
+
+            // Dados Acadêmicos
+            document.getElementById('faculdade').textContent = perfilAluno.faculdade || candidatura.faculdadeAluno || '-';
+            document.getElementById('curso').textContent = perfilAluno.curso || candidatura.cursoAluno || '-';
+            document.getElementById('semestre').textContent = perfilAluno.semestre || '-';
+            document.getElementById('conclusao').textContent = perfilAluno.conclusao || '-';
+
+            // Experiência Profissional
+            document.getElementById('temExperiencia').textContent = perfilAluno.temExperiencia || 'Não';
+            
+            if (perfilAluno.temExperiencia === 'Sim') {
+                document.getElementById('detalhesExperiencia').classList.remove('d-none');
+                document.getElementById('trabalhando').textContent = perfilAluno.trabalhando || '-';
+                document.getElementById('qualExperiencia').textContent = perfilAluno.qualExperiencia || '-';
+            }
+        }
+
+        function entrarEmContato() {
+            const email = document.getElementById('emailCandidato').textContent;
+            const nome = document.getElementById('nomeCandidato').textContent;
+            
+            if (email && email !== '-') {
+                window.location.href = `mailto:${email}?subject=Oportunidade de Emprego&body=Olá ${nome},%0D%0A%0D%0AVimos seu currículo e gostariamos de conversar sobre uma oportunidade...`;
+            } else {
+                alert('Email não disponível');
+            }
+        }
+
+        function aceitarCandidatura() {
+            const emailCandidato = new URLSearchParams(window.location.search).get('email');
+            const vagaId = new URLSearchParams(window.location.search).get('vagaId');
+            
+            if (!confirm('Deseja aceitar esta candidatura? A vaga será marcada como preenchida.')) {
+                return;
+            }
+
+            // Atualiza status da candidatura
+            let candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+            const candidaturaIndex = candidaturas.findIndex(c => 
+                c.emailAluno === emailCandidato && (!vagaId || c.vagaId == vagaId)
+            );
+
+            if (candidaturaIndex !== -1) {
+                candidaturas[candidaturaIndex].status = 'aceita';
+                candidaturas[candidaturaIndex].dataAceite = new Date().toISOString();
+                localStorage.setItem('candidaturas', JSON.stringify(candidaturas));
+
+                // Marca vaga como preenchida
+                if (vagaId) {
+                    let vagasEmpresa = JSON.parse(localStorage.getItem('vagasEmpresa') || '[]');
+                    const vagaIndex = vagasEmpresa.findIndex(v => v.id == vagaId);
+                    if (vagaIndex !== -1) {
+                        vagasEmpresa[vagaIndex].status = 'preenchida';
+                        localStorage.setItem('vagasEmpresa', JSON.stringify(vagasEmpresa));
+                    }
+                }
+
+                alert('Candidatura aceita com sucesso! A vaga foi marcada como preenchida.');
+                document.getElementById('btnAceitar').disabled = true;
+                document.getElementById('btnAceitar').innerHTML = '<i class="bi bi-check-circle-fill"></i> Candidatura Aceita';
+            } else {
+                alert('Erro ao aceitar candidatura.');
+            }
+        }
+
+        // Inicializa
+        if (verificarLogin()) {
+            carregarCurriculo();
+        }
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

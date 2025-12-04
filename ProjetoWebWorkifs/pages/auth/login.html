@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Workifs</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body class="login-page">
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+    <div class="login-container">
+        <img src="../../assets/images/logo.png" alt="Logo Workifs" class="logo-login">
+        
+        <form class="login-form" onsubmit="fazerLogin(event)">
+            <div class="form-group">
+                <label for="email">Insira seu email</label>
+                <input type="email" id="email" placeholder="Enter an email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Insira sua senha</label>
+                <div class="password-input">
+                    <input type="password" id="senha" placeholder="Senha" required>
+                    <button type="button" class="show-password" onclick="togglePassword()">Show</button>
+                </div>
+            </div>
+
+            <div class="links-container">
+                <a href="cadastro.html" class="link-secundario">Não possuo conta</a>
+                <a href="recuperar-senha.html" class="link-secundario">Esqueci minha senha</a>
+            </div>
+
+            <div class="botoes-container">
+                <button type="button" class="botao-secundario" onclick="window.location.href='../../index.html'">Cancelar</button>
+                <button type="submit" class="botao-primario">Login</button>
+            </div>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+            <span>ou continue com</span>
+        </div>
+
+        <!-- Login Social (OAuth 2.0) -->
+        <div class="social-login">
+            <button type="button" class="social-btn google-btn" onclick="loginComGoogle()">
+                <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                    <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
+                    <path d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.71 0-.593.102-1.17.282-1.71V4.96H.957C.347 6.175 0 7.55 0 9.002c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                    <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.428 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
+                </svg>
+                Google
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Migração automática de dados antigos
+        (function migrarDadosAntigos() {
+            // Migra contaAluno para contasAlunos
+            const contaAluno = JSON.parse(localStorage.getItem('contaAluno') || 'null');
+            if (contaAluno) {
+                const contasAlunos = JSON.parse(localStorage.getItem('contasAlunos') || '[]');
+                if (!contasAlunos.some(c => c.email === contaAluno.email)) {
+                    contasAlunos.push(contaAluno);
+                    localStorage.setItem('contasAlunos', JSON.stringify(contasAlunos));
+                }
+                localStorage.removeItem('contaAluno');
+            }
+        })();
+
+        function togglePassword() {
+            const senhaInput = document.getElementById('senha');
+            const btn = document.querySelector('.show-password');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                senhaInput.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function fazerLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            // Busca todas as contas cadastradas (suporta múltiplos usuários)
+            const contasAlunos = JSON.parse(localStorage.getItem('contasAlunos') || '[]');
+            
+            // Verifica se existe uma conta com esse email e senha
+            const contaEncontrada = contasAlunos.find(conta => 
+                conta.email === email && conta.senha === senha
+            );
+            
+            if (contaEncontrada) {
+                // Login bem-sucedido
+                localStorage.setItem('userLogado', JSON.stringify({ 
+                    email: email, 
+                    tipo: 'aluno',
+                    nome: contaEncontrada.nome || 'Usuário'
+                }));
+                window.location.href = '../../vagas.html';
+            } else {
+                // Login falhou
+                alert('Email ou senha incorretos!');
+            }
+        }
+
+        // ========== OAuth 2.0 Google ==========
+        const GOOGLE_CLIENT_ID = '431128073932-41s9ru6oaajl8gjdtvdto844dgi7crvn.apps.googleusercontent.com';
+        const REDIRECT_URI = window.location.origin + '/pages/auth/oauth-callback.html';
+
+        function loginComGoogle() {
+            // Google OAuth 2.0 usando OpenID Connect
+            const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+            const params = new URLSearchParams({
+                client_id: GOOGLE_CLIENT_ID,
+                redirect_uri: REDIRECT_URI,
+                response_type: 'token id_token',
+                scope: 'openid email profile',
+                nonce: generateNonce(),
+                state: generateState('google')
+            });
+            
+            window.location.href = `${googleAuthUrl}?${params.toString()}`;
+        }
+
+        // Funções auxiliares para segurança OAuth
+        function generateNonce() {
+            const array = new Uint8Array(16);
+            crypto.getRandomValues(array);
+            return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+
+        function generateState(provider) {
+            const state = {
+                provider: provider,
+                nonce: generateNonce(),
+                timestamp: Date.now()
+            };
+            const stateString = JSON.stringify(state);
+            sessionStorage.setItem('oauth_state', stateString);
+            return btoa(stateString);
+        }
+
+
+    </script>
+    
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Vagas - Workifs Empresa</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="home-empresa.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home-empresa.html">Minhas Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alertas-empresa.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeEmpresaNav">Empresa</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-empresa.html">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogarEmpresa()">Deslogar</a></li>
+                        <li><a class="dropdown-item text-danger" href="login-empresa.html">Alterar login</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <!-- Botão Criar Nova Vaga -->
+        <div class="d-flex justify-content-center mb-4">
+            <button class="btn btn-success btn-lg" onclick="window.location.href='criar-vaga.html'">
+                <i class="bi bi-plus-circle"></i> Criar nova vaga
+            </button>
+        </div>
+
+        <!-- Lista de Vagas -->
+        <div id="vagasContainer">
+            <!-- Vagas serão inseridas aqui via JavaScript -->
+        </div>
+
+        <!-- Mensagem quando não há vagas -->
+        <div id="semVagas" class="text-center py-5 d-none">
+            <i class="bi bi-inbox" style="font-size: 4rem; color: #10b981;"></i>
+            <h3 class="mt-3">Nenhuma vaga criada ainda</h3>
+            <p class="text-muted">Clique em "Criar nova vaga" para publicar sua primeira oportunidade.</p>
+        </div>
+    </div>
+
+    <!-- Modal Ver Candidatos -->
+    <div class="modal fade" id="candidatosModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Candidatos da Vaga</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="candidatosBody">
+                    <!-- Candidatos serão inseridos aqui -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verifica se empresa está logada
+        function verificarLogin() {
+            const empresa = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+            if (!empresa || !empresa.email) {
+                window.location.href = '../auth/login-empresa.html';
+                return false;
+            }
+            
+            const perfil = JSON.parse(localStorage.getItem('perfilEmpresa') || '{}');
+            document.getElementById('nomeEmpresaNav').textContent = perfil.nomeEmpresa || empresa.nomeEmpresa || 'Empresa';
+            return true;
+        }
+
+        function deslogarEmpresa() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('empresaLogada');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        function carregarVagas() {
+            const vagas = JSON.parse(localStorage.getItem('vagasEmpresa') || '[]');
+            const container = document.getElementById('vagasContainer');
+            const semVagas = document.getElementById('semVagas');
+
+            if (vagas.length === 0) {
+                container.innerHTML = '';
+                semVagas.classList.remove('d-none');
+                return;
+            }
+
+            semVagas.classList.add('d-none');
+            container.innerHTML = '';
+
+            vagas.forEach((vaga, index) => {
+                // Conta candidatos
+                const candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+                const candidatosDaVaga = candidaturas.filter(c => c.vagaId === vaga.id);
+                
+                const card = document.createElement('div');
+                card.className = 'card mb-3 shadow-sm position-relative';
+                card.innerHTML = `
+                    <div class="card-body">
+                        ${vaga.status === 'preenchida' ? '<span class="badge bg-success position-absolute top-0 end-0 m-3" style="font-size: 0.9rem;"><i class="bi bi-check-circle-fill"></i> Vaga Preenchida</span>' : ''}
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4 class="card-title text-success mb-2">${vaga.cargo}</h4>
+                                <p class="mb-1"><strong>Empresa:</strong> ${vaga.nomeEmpresa}</p>
+                                <p class="mb-1"><strong>Cidade:</strong> ${vaga.cidade}</p>
+                                <div class="d-flex gap-2 flex-wrap mt-2">
+                                    <span class="badge bg-primary">${vaga.area}</span>
+                                    <span class="badge bg-info">${vaga.tipoContrato}</span>
+                                    <span class="badge bg-secondary">${vaga.turno}</span>
+                                    <span class="badge bg-success">${vaga.tipoTrabalho}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                ${vaga.status !== 'preenchida' ? `
+                                <div class="mb-3">
+                                    <h5 class="mb-0">${candidatosDaVaga.length}</h5>
+                                    <small class="text-muted">Candidatos</small>
+                                </div>
+                                ` : ''}
+                                <button class="btn btn-outline-success btn-sm me-2" onclick="editarVaga(${index})" ${vaga.status === 'preenchida' ? 'disabled' : ''}>
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
+                                <button class="btn btn-success btn-sm" onclick="verCandidatos(${index})">
+                                    <i class="bi bi-people"></i> Ver Candidatos
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function editarVaga(index) {
+            localStorage.setItem('vagaEditarIndex', index);
+            window.location.href = 'editar-vaga.html';
+        }
+
+        function verCandidatos(index) {
+            const vagas = JSON.parse(localStorage.getItem('vagasEmpresa') || '[]');
+            const vaga = vagas[index];
+            const candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+            const candidatosDaVaga = candidaturas.filter(c => c.vagaId === vaga.id);
+
+            const modal = new bootstrap.Modal(document.getElementById('candidatosModal'));
+            const body = document.getElementById('candidatosBody');
+
+            if (candidatosDaVaga.length === 0) {
+                body.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-person-x" style="font-size: 3rem; color: #6b7280;"></i>
+                        <h5 class="mt-3">Nenhum candidato ainda</h5>
+                        <p class="text-muted">Esta vaga ainda não recebeu candidaturas.</p>
+                    </div>
+                `;
+            } else {
+                body.innerHTML = '';
+                candidatosDaVaga.forEach(candidatura => {
+                    const candidatoDiv = document.createElement('div');
+                    candidatoDiv.className = 'border-bottom pb-3 mb-3';
+                    candidatoDiv.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${candidatura.nomeAluno || 'Candidato'}</h6>
+                                <p class="text-muted mb-1 small">${candidatura.emailAluno || 'email@example.com'}</p>
+                                <p class="mb-1 small"><strong>Telefone:</strong> ${candidatura.telefoneAluno || 'Não informado'}</p>
+                                <p class="mb-1 small"><strong>Faculdade:</strong> ${candidatura.faculdadeAluno || 'Não informado'}</p>
+                                <p class="mb-1 small"><strong>Curso:</strong> ${candidatura.cursoAluno || 'Não informado'}</p>
+                                <p class="mb-0 small"><strong>Data da candidatura:</strong> ${new Date(candidatura.dataCandidatura).toLocaleDateString('pt-BR')}</p>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-success" onclick="verCurriculoCompleto('${candidatura.emailAluno}', ${vaga.id})">
+                                    <i class="bi bi-file-earmark-person"></i> Ver Currículo
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    body.appendChild(candidatoDiv);
+                });
+            }
+
+            modal.show();
+        }
+
+        function verCurriculoCompleto(emailAluno, vagaId) {
+            window.location.href = `visualizar-curriculo.html?email=${encodeURIComponent(emailAluno)}&vagaId=${vagaId}`;
+        }
+
+        // Inicializa ao carregar
+        if (verificarLogin()) {
+            carregarVagas();
+        }
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Workifs</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="../../vagas.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../vagas.html">Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="alertas-aluno.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                        <span id="nomeUsuario">Name Lastname</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-aluno.html">Editar Perfil</a></li>
+                        <li><a class="dropdown-item" href="ver-curriculo-aluno.html">Ver Currículo</a></li>
+                        <li><a class="dropdown-item" href="alertas-aluno.html">Minhas Candidaturas</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogar()">Deslogar</a></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="alterarLogin()">Alterar login</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner com foto do perfil -->
+    <div class="container-fluid p-0">
+        <div class="position-relative" style="height: 250px; background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);">
+            <div class="position-absolute bottom-0 start-0 w-100 text-center" style="transform: translateY(50%);">
+                <div class="position-relative d-inline-block">
+                    <img src="../../assets/images/logo.png" alt="Foto do Perfil" class="rounded-circle bg-white p-2" 
+                         style="width: 120px; height: 120px; border: 4px solid white; object-fit: cover;" id="fotoPerfil">
+                    <button class="btn btn-sm btn-success rounded-circle position-absolute bottom-0 end-0" 
+                            style="width: 35px; height: 35px;" onclick="alterarFoto()">
+                        <i class="bi bi-camera-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações do Perfil -->
+    <div class="container mt-5 pt-5">
+        <div class="text-center mb-4">
+            <h2 id="nomeCompleto">Name Lastname</h2>
+            <p class="text-muted" id="emailUsuario">name@company.com</p>
+        </div>
+
+        <!-- Tabs de Informações -->
+        <ul class="nav nav-tabs justify-content-center mb-4" id="perfilTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button">
+                    Informações Pessoais
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="academico-tab" data-bs-toggle="tab" data-bs-target="#academico" type="button">
+                    Dados Acadêmicos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="experiencia-tab" data-bs-toggle="tab" data-bs-target="#experiencia" type="button">
+                    Experiência
+                </button>
+            </li>
+        </ul>
+
+        <!-- Conteúdo das Tabs -->
+        <div class="tab-content" id="perfilTabsContent">
+            <!-- Tab Informações Pessoais -->
+            <div class="tab-pane fade show active" id="info" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Informações Pessoais</h5>
+                                    <button class="btn btn-sm btn-outline-success" onclick="editarInformacoes()">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Nome Completo</label>
+                                        <p class="form-control-plaintext" id="displayNome">-</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Email</label>
+                                        <p class="form-control-plaintext" id="displayEmail">-</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4">
+                                    <label class="form-label fw-semibold">Sobre Você</label>
+                                    <p class="form-control-plaintext" id="displaySobre">Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Dados Acadêmicos -->
+            <div class="tab-pane fade" id="academico" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Dados Acadêmicos</h5>
+                                    <button class="btn btn-sm btn-outline-success" onclick="editarAcademico()">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Faculdade</label>
+                                        <p class="form-control-plaintext" id="displayFaculdade">Faculdade</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Curso</label>
+                                        <p class="form-control-plaintext" id="displayCurso">Curso</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">Semestre Atual</label>
+                                        <p class="form-control-plaintext" id="displaySemestre">-</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">Previsão de Conclusão</label>
+                                        <p class="form-control-plaintext" id="displayConclusao">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Experiência -->
+            <div class="tab-pane fade" id="experiencia" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Experiência Profissional</h5>
+                                    <button class="btn btn-sm btn-outline-success" onclick="editarExperiencia()">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Tem experiência?</label>
+                                    <p class="form-control-plaintext" id="displayTemExperiencia">Não informado</p>
+                                </div>
+
+                                <div id="experienciaDetalhes" class="d-none">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Está trabalhando atualmente?</label>
+                                        <p class="form-control-plaintext" id="displayTrabalhando">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="form-label fw-semibold">Qual sua experiência?</label>
+                                        <p class="form-control-plaintext" id="displayQualExperiencia">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Voltar -->
+        <div class="text-center mt-4 mb-5">
+            <button class="btn btn-success btn-lg" onclick="window.location.href='../../vagas.html'">
+                <i class="bi bi-arrow-left"></i> Voltar para Vagas
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="editModalTitle">Editar Perfil</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="editModalBody">
+                    <!-- Conteúdo dinâmico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="salvarEdicao()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Carrega dados do usuário
+        function carregarPerfil() {
+            const user = JSON.parse(localStorage.getItem('userLogado') || '{}');
+            const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            
+            if (!user.email) {
+                window.location.href = '../auth/login.html';
+                return;
+            }
+
+            // Atualiza informações na tela
+            document.getElementById('nomeUsuario').textContent = perfil.nome || user.nome || 'Usuário';
+            document.getElementById('nomeCompleto').textContent = perfil.nome || user.nome || 'Name Lastname';
+            document.getElementById('emailUsuario').textContent = user.email;
+            
+            // Informações pessoais
+            document.getElementById('displayNome').textContent = perfil.nome || '-';
+            document.getElementById('displayEmail').textContent = user.email;
+            document.getElementById('displaySobre').textContent = perfil.sobre || 'Nenhuma informação adicionada ainda.';
+            
+            // Dados acadêmicos
+            document.getElementById('displayFaculdade').textContent = perfil.faculdade || '-';
+            document.getElementById('displayCurso').textContent = perfil.curso || '-';
+            document.getElementById('displaySemestre').textContent = perfil.semestre || '-';
+            document.getElementById('displayConclusao').textContent = perfil.conclusao || '-';
+            
+            // Experiência
+            document.getElementById('displayTemExperiencia').textContent = perfil.temExperiencia || 'Não informado';
+            if (perfil.temExperiencia === 'Sim') {
+                document.getElementById('experienciaDetalhes').classList.remove('d-none');
+                document.getElementById('displayTrabalhando').textContent = perfil.trabalhando || '-';
+                document.getElementById('displayQualExperiencia').textContent = perfil.qualExperiencia || '-';
+            }
+        }
+
+        function editarInformacoes() {
+            const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            document.getElementById('editModalTitle').textContent = 'Editar Informações Pessoais';
+            document.getElementById('editModalBody').innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" class="form-control" id="editNome" value="${perfil.nome || ''}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Sobre Você</label>
+                    <textarea class="form-control" id="editSobre" rows="4">${perfil.sobre || ''}</textarea>
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+
+        function editarAcademico() {
+            const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            document.getElementById('editModalTitle').textContent = 'Editar Dados Acadêmicos';
+            document.getElementById('editModalBody').innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Faculdade</label>
+                    <input type="text" class="form-control" id="editFaculdade" value="${perfil.faculdade || ''}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Curso</label>
+                    <input type="text" class="form-control" id="editCurso" value="${perfil.curso || ''}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Semestre Atual</label>
+                    <input type="text" class="form-control" id="editSemestre" value="${perfil.semestre || ''}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Previsão de Conclusão</label>
+                    <input type="text" class="form-control" id="editConclusao" value="${perfil.conclusao || ''}">
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+
+        function editarExperiencia() {
+            const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            document.getElementById('editModalTitle').textContent = 'Editar Experiência';
+            document.getElementById('editModalBody').innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Tem experiência?</label>
+                    <select class="form-select" id="editTemExperiencia" onchange="toggleExpFields()">
+                        <option value="Não" ${perfil.temExperiencia === 'Não' ? 'selected' : ''}>Não</option>
+                        <option value="Sim" ${perfil.temExperiencia === 'Sim' ? 'selected' : ''}>Sim</option>
+                    </select>
+                </div>
+                <div id="expFields" class="${perfil.temExperiencia === 'Sim' ? '' : 'd-none'}">
+                    <div class="mb-3">
+                        <label class="form-label">Está trabalhando atualmente?</label>
+                        <select class="form-select" id="editTrabalhando">
+                            <option value="Não" ${perfil.trabalhando === 'Não' ? 'selected' : ''}>Não</option>
+                            <option value="Sim" ${perfil.trabalhando === 'Sim' ? 'selected' : ''}>Sim</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Qual sua experiência?</label>
+                        <textarea class="form-control" id="editQualExperiencia" rows="3">${perfil.qualExperiencia || ''}</textarea>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+
+        function toggleExpFields() {
+            const temExp = document.getElementById('editTemExperiencia').value;
+            const fields = document.getElementById('expFields');
+            if (temExp === 'Sim') {
+                fields.classList.remove('d-none');
+            } else {
+                fields.classList.add('d-none');
+            }
+        }
+
+        function salvarEdicao() {
+            let perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+            
+            // Verifica qual modal está aberto e salva os dados correspondentes
+            const titulo = document.getElementById('editModalTitle').textContent;
+            
+            if (titulo.includes('Informações Pessoais')) {
+                perfil.nome = document.getElementById('editNome').value;
+                perfil.sobre = document.getElementById('editSobre').value;
+            } else if (titulo.includes('Acadêmicos')) {
+                perfil.faculdade = document.getElementById('editFaculdade').value;
+                perfil.curso = document.getElementById('editCurso').value;
+                perfil.semestre = document.getElementById('editSemestre').value;
+                perfil.conclusao = document.getElementById('editConclusao').value;
+            } else if (titulo.includes('Experiência')) {
+                perfil.temExperiencia = document.getElementById('editTemExperiencia').value;
+                if (perfil.temExperiencia === 'Sim') {
+                    perfil.trabalhando = document.getElementById('editTrabalhando').value;
+                    perfil.qualExperiencia = document.getElementById('editQualExperiencia').value;
+                }
+            }
+            
+            localStorage.setItem('perfilAluno', JSON.stringify(perfil));
+            bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            carregarPerfil();
+            
+            // Toast de sucesso
+            showToast('Perfil atualizado com sucesso!');
+        }
+
+        function editarPerfil() {
+            // Já está na página de perfil
+        }
+
+        function verCurriculo() {
+            alert('Funcionalidade de visualizar currículo em desenvolvimento');
+        }
+
+        function deslogar() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('userLogado');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        function alterarLogin() {
+            if (confirm('Deseja alterar suas credenciais de login?')) {
+                window.location.href = '../auth/login.html';
+            }
+        }
+
+        function alterarFoto() {
+            alert('Funcionalidade de upload de foto em desenvolvimento');
+        }
+
+        function showToast(message) {
+            const toastHTML = `
+                <div class="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', toastHTML);
+            const toastEl = document.querySelector('.toast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+            setTimeout(() => toastEl.remove(), 5000);
+        }
+
+        // Carrega perfil ao carregar a página
+        carregarPerfil();
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

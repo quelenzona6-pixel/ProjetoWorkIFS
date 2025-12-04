@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vagas - Portal de Vagas</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Seus arquivos de estilo -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/vagas.css">
+
+</head>
+<body>
+
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar Bootstrap Responsiva -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/images/logo.png" alt="Logo" height="46">
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <div class="navbar-nav mx-auto d-flex flex-lg-row flex-column gap-3 my-3 my-lg-0">
+                    <select class="form-select form-select-sm" id="Cidade" style="min-width: 200px;">
+                        <option value="">Cidade</option>
+                        <option value="Curitiba">Curitiba</option>
+                        <option value="Pinhais">Pinhais</option>
+                        <option value="São Jose dos Pinhais">São Jose dos Pinhais</option>
+                        <option value="Araucária">Araucária</option>
+                    </select>
+
+                    <select class="form-select form-select-sm" id="area" style="min-width: 200px;">
+                        <option value="">Área de Interesse</option>
+                        <option value="Tecnologia">Tecnologia</option>
+                        <option value="Saúde">Saúde</option>
+                        <option value="Finanças">Finanças</option>
+                        <option value="Engenharia">Engenharia</option>
+                    </select>
+
+                    <select class="form-select form-select-sm" id="turno" style="min-width: 200px;">
+                        <option value="">Turno</option>
+                        <option value="Manhã">Manhã</option>
+                        <option value="Tarde">Tarde</option>
+                        <option value="Noite">Noite</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-success" onclick="login()" id="btnLogin">
+                    Login
+                </button>
+                
+                <div class="dropdown d-none" id="userDropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeUsuarioNav">Usuário</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="pages/aluno/perfil-aluno.html">Editar Perfil</a></li>
+                        <li><a class="dropdown-item" href="ver-curriculo-aluno.html">Ver Currículo</a></li>
+                        <li><a class="dropdown-item" href="pages/aluno/alertas-aluno.html">Minhas Candidaturas</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogarNav()">Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header com filtros ativos -->
+    <div class="container mt-4">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-funnel-fill me-2"></i>
+            <div>
+                <strong>Resultados para:</strong> 
+                <span class="badge bg-primary" id="selectedArea">Área</span>
+                <span class="badge bg-success" id="selectedCity">Cidade</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="text-center my-5 d-none" id="loadingSpinner">
+        <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-3 text-muted">Buscando vagas...</p>
+    </div>
+
+    <!-- Container de Vagas com Bootstrap Grid -->
+    <div class="container mb-5">
+        <div class="row g-4" id="vagasContainer"></div>
+    </div>
+
+    <!-- Modal de Detalhes da Vaga -->
+    <div class="modal fade" id="vagaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalTitulo"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button class="btn btn-success" onclick="candidatarVagaModal()">
+                        <i class="bi bi-send-fill"></i> Candidatar-se
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Candidatura -->
+    <div class="modal fade" id="confirmacaoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Confirmar Candidatura
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Seu currículo está correto? Deseja enviar a candidatura assim mesmo?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="irParaPerfil()">
+                        Não, revisar perfil
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="enviarCandidatura()">
+                        Sim, enviar candidatura
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="vagaToast" class="toast" role="alert">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <strong class="me-auto">Workifs</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+
+<script>
+/* ===============================
+        CONFIG & HELPERS
+   =============================== */
+const API_REMOTIVE = 'https://remotive.com/api/remote-jobs';
+
+/* Mapeia as opções da UI para termos que a API entende melhor */
+const AREA_KEYWORDS = {
+  'Tecnologia': [
+    'developer','software','engineer','programming','devops','data',
+    'backend','frontend','full stack','mobile','qa','react','node','java','python'
+  ],
+  'Saúde': [
+    'health','healthcare','medical','nurse','clinic','biomedical','pharma','wellness'
+  ],
+  'Finanças': [
+    'finance','financial','accounting','accounts','analyst','economics','banking','audit','tax'
+  ],
+  'Engenharia': [
+    'engineer','engineering','mechanical','civil','electrical','industrial','quality'
+  ]
+};
+
+/* As cidades do seletor mapeadas para termos que costumam aparecer na API */
+const CITY_ALIASES = {
+  'Curitiba': ['curitiba','paraná','parana','brazil','brasil'],
+  'Pinhais': ['pinhais','curitiba','paraná','parana','brazil','brasil'],
+  'São Jose dos Pinhais': [
+    'são josé dos pinhais','sao jose dos pinhais','curitiba','paraná','parana','brazil','brasil'
+  ],
+  'Araucária': ['araucária','araucaria','curitiba','paraná','parana','brazil','brasil']
+};
+
+/* Regiões genéricas aceitas para quem está no Brasil */
+const GENERIC_REGIONS = [
+  'brazil','brasil','latam','south america','latin america','americas','worldwide','anywhere','global','remote'
+];
+
+// ====== DADOS LOCAIS (exemplo) ======
+const VAGAS = [
+  {
+    id: 1,
+    titulo: 'Desenvolvedor Front-end',
+    empresa: 'TechPlus',
+    cidade: 'Curitiba',
+    area: 'Tecnologia',
+    tipo: 'Estágio',
+    salario: 'R$ 6.000 - R$ 8.000',
+    turno: 'Manhã',
+    tipoTrabalho: 'Home Office',
+    beneficios: 'Vale transporte, Vale alimentação, Plano de saúde',
+    descricao: 'Atuar com React, CSS e integrações REST.',
+    url: '#'
+  },
+  {
+    id: 3,
+    titulo: 'Auxiliar de Enfermagem',
+    empresa: 'VidaSaúde',
+    cidade: 'Pinhais',
+    area: 'Saúde',
+    tipo: 'Estágio',
+    salario: 'R$ 2.500',
+    turno: 'Noite',
+    tipoTrabalho: 'Home Office',
+    beneficios: 'Vale transporte, Cesta básica',
+    descricao: 'Atendimento clínico e suporte ao corpo médico.',
+    url: '#'
+  },
+  {
+    id: 4,
+    titulo: 'Assistente Financeiro',
+    empresa: 'FinanPro',
+    cidade: 'Curitiba',
+    area: 'Finanças',
+    tipo: 'Estágio',
+    salario: 'R$ 3.500',
+    turno: 'Manhã',
+    tipoTrabalho: 'Presencial',
+    beneficios: 'Vale refeição, Vale transporte',
+    descricao: 'Contas a pagar/receber e conciliações.',
+    url: '#'
+  },
+  {
+    id: 5,
+    titulo: 'Engenheiro de Qualidade',
+    empresa: 'IndusTech',
+    cidade: 'São Jose dos Pinhais',
+    area: 'Engenharia',
+    tipo: 'Estágio',
+    salario: 'R$ 7.500',
+    turno: 'Tarde',
+    tipoTrabalho: 'Home Office',
+    beneficios: 'Assistência médica, Vale alimentação',
+    descricao: 'Controle de qualidade e auditorias internas.',
+    url: '#'
+  },
+  {
+    id: 6,
+    titulo: 'Estagiário de Desenvolvimento Web',
+    empresa: 'CodeLab Soluções',
+    cidade: 'Curitiba',
+    area: 'Tecnologia',
+    tipo: 'Estágio',
+    salario: 'R$ 1.200 + auxílios',
+    turno: 'Manhã',
+    tipoTrabalho: 'Híbrido',
+    beneficios: 'Vale transporte, Vale refeição, Seguro de vida, Cursos e certificações gratuitas',
+    descricao: 'Oportunidade para estudantes de TI atuarem no desenvolvimento de aplicações web utilizando HTML, CSS, JavaScript e frameworks modernos. O estagiário terá mentoria direta com desenvolvedores seniores, participará de projetos reais e terá acesso a treinamentos técnicos. Requisitos: estar cursando Ciência da Computação, Sistemas de Informação ou áreas correlatas a partir do 3º período.',
+    url: '#'
+  },
+  {
+    id: 7,
+    titulo: 'Jovem Aprendiz - Auxiliar Administrativo Financeiro',
+    empresa: 'Grupo Invest+',
+    cidade: 'Pinhais',
+    area: 'Finanças',
+    tipo: 'Jovem Aprendiz',
+    salario: 'R$ 850',
+    turno: 'Tarde',
+    tipoTrabalho: 'Presencial',
+    beneficios: 'Vale transporte, Vale alimentação, Plano de saúde, Programa de desenvolvimento profissional',
+    descricao: 'Vaga destinada a jovens entre 18 e 24 anos que desejam iniciar carreira na área financeira. Principais atividades: auxílio em rotinas administrativas, organização de documentos, lançamentos básicos em sistema, atendimento interno e apoio à equipe de contas a pagar/receber. Oferecemos treinamento completo e acompanhamento de tutor durante todo o programa. Requisitos: estar cursando ensino médio ou superior em Administração, Contabilidade ou áreas afins.',
+    url: '#'
+  },
+  {
+    id: 8,
+    titulo: 'Bolsista de Pesquisa - Análise de Dados em Saúde',
+    empresa: 'Instituto HealthData',
+    cidade: 'Araucária',
+    area: 'Saúde',
+    tipo: 'Bolsista',
+    salario: 'R$ 1.500',
+    turno: 'Flexível',
+    tipoTrabalho: 'Home Office',
+    beneficios: 'Bolsa-auxílio, Material didático, Participação em congressos, Certificado de conclusão, Carta de recomendação',
+    descricao: 'Bolsa de pesquisa voltada para estudantes de Enfermagem, Biomedicina, Farmácia ou áreas da saúde interessados em análise de dados epidemiológicos. O bolsista irá coletar, organizar e analisar dados de saúde pública utilizando ferramentas como Excel e SPSS, contribuir com relatórios técnicos e apoiar estudos científicos. Requisitos: estar regularmente matriculado em curso de graduação da área da saúde (a partir do 4º período), ter conhecimento básico em estatística e disponibilidade de 20h semanais.',
+    url: '#'
+  }
+];
+
+const container = document.getElementById('vagasContainer');
+const cidadeEl  = document.getElementById('Cidade');
+const areaEl    = document.getElementById('area');
+const turnoEl   = document.getElementById('turno');
+const cityLabel = document.getElementById('selectedCity');
+const areaLabel = document.getElementById('selectedArea');
+
+// Lê parâmetros iniciais da URL (se existirem) e aplica nos selects
+const urlParams   = new URLSearchParams(window.location.search);
+const initialCity = (urlParams.get('cidade') || '').trim();
+const initialArea = (urlParams.get('area')   || '').trim();
+const initialTurno = (urlParams.get('turno') || '').trim();
+if (cidadeEl && initialCity) setSelectIfExists(cidadeEl, initialCity);
+if (areaEl && initialArea)   setSelectIfExists(areaEl,   initialArea);
+if (turnoEl && initialTurno) setSelectIfExists(turnoEl,  initialTurno);
+
+let cidadeAtual = cidadeEl ? (cidadeEl.value || initialCity || '') : (initialCity || '');
+let areaAtual   = areaEl   ? (areaEl.value   || initialArea || '') : (initialArea || '');
+let turnoAtual  = turnoEl  ? (turnoEl.value  || initialTurno || ''): (initialTurno || '');
+updateHeaderLabels();
+
+/* Helpers */
+function setSelectIfExists(select, value) {
+  [...select.options].forEach(opt => {
+    if (opt.value.toLowerCase() === value.toLowerCase()) opt.selected = true;
+  });
+}
+function escapeHTML(str = '') {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function truncate(text = '', max = 220) {
+  return text.length > max ? text.slice(0, max - 1) + '…' : text;
+}
+function updateHeaderLabels() {
+  if (cityLabel) cityLabel.textContent = cidadeAtual || 'Cidade';
+  if (areaLabel) areaLabel.textContent = areaAtual   || 'Área';
+}
+function updateUrl() {
+  const sp = new URLSearchParams(window.location.search);
+  cidadeAtual ? sp.set('cidade', cidadeAtual) : sp.delete('cidade');
+  areaAtual   ? sp.set('area',   areaAtual)   : sp.delete('area');
+  turnoAtual  ? sp.set('turno',  turnoAtual)  : sp.delete('turno');
+  const qs = sp.toString();
+  history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : ''));
+}
+
+// ====== LISTA + FILTRO ======
+function carregarVagas() {
+  updateHeaderLabels();
+  const txtArea = (areaAtual   || '').toLowerCase();
+  const txtCity = (cidadeAtual || '').toLowerCase();
+  const txtTurn = (turnoAtual  || '').toLowerCase();
+
+  // Carrega vagas criadas por empresas do localStorage
+  let vagasEmpresa = JSON.parse(localStorage.getItem('vagasEmpresa') || '[]');
+  
+  // Corrige vagas antigas sem status (define como 'ativa')
+  let precisaAtualizar = false;
+  vagasEmpresa = vagasEmpresa.map(v => {
+    if (!v.status) {
+      precisaAtualizar = true;
+      return {...v, status: 'ativa'};
+    }
+    return v;
+  });
+  
+  // Salva de volta se houve correção
+  if (precisaAtualizar) {
+    localStorage.setItem('vagasEmpresa', JSON.stringify(vagasEmpresa));
+  }
+  
+  // Converte vagas da empresa para o formato das vagas estáticas
+  // Mostra apenas vagas ativas (não mostra as preenchidas)
+  const vagasEmpresaFormatadas = vagasEmpresa.filter(v => v.status === 'ativa').map(v => ({
+    id: v.id,
+    titulo: v.cargo || v.titulo,
+    empresa: v.nomeEmpresa || v.empresa,
+    cidade: v.cidade,
+    area: v.area,
+    tipo: v.tipoContrato || v.tipo,
+    salario: v.salario,
+    turno: v.turno,
+    tipoTrabalho: v.tipoTrabalho,
+    beneficios: v.beneficios,
+    descricao: v.descricao,
+    url: '#',
+    isEmpresa: true // Flag para identificar vagas de empresas
+  }));
+
+  // Combina vagas estáticas com vagas de empresas e salva na variável global
+  todasAsVagas = [...VAGAS, ...vagasEmpresaFormatadas];
+
+  const filtradas = todasAsVagas.filter(v => {
+    const areaOk  = !txtArea || v.area.toLowerCase().includes(txtArea) || v.titulo.toLowerCase().includes(txtArea);
+    const cityOk  = !txtCity || v.cidade.toLowerCase().includes(txtCity);
+    const turnoOk = !txtTurn || v.turno.toLowerCase() === txtTurn;
+    return areaOk && cityOk && turnoOk;
+  });
+
+  renderVagas(filtradas);
+}
+
+/* ===============================
+        RENDER
+   =============================== */
+function renderVagas(vagas) {
+  container.innerHTML = '';
+  const spinner = document.getElementById('loadingSpinner');
+  if (spinner) spinner.classList.add('d-none');
+
+  if (!vagas.length) {
+    container.innerHTML = `
+      <div class="col-12">
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+          <div>
+            <h5 class="alert-heading">Nenhuma vaga encontrada</h5>
+            <p class="mb-2">Não encontramos vagas para os filtros selecionados.</p>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-sm btn-outline-secondary" onclick="limparCidade()">
+                <i class="bi bi-x-circle"></i> Limpar cidade
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="limparArea()">
+                <i class="bi bi-x-circle"></i> Limpar área
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="limparTurno()">
+                <i class="bi bi-x-circle"></i> Limpar turno
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  vagas.forEach((v, index) => {
+    const colDiv = document.createElement('div');
+    colDiv.className = 'col-12 col-lg-6';
+    
+    // Badges de tipo de contrato com cores diferentes
+    const tipoBadgeColor = {
+      'Estágio': 'primary',
+      'PJ': 'info',
+      'CLT': 'success',
+      'Jovem Aprendiz': 'warning',
+      'Bolsista': 'secondary'
+    };
+    const badgeColor = tipoBadgeColor[v.tipo] || 'secondary';
+
+    // Ícones para tipo de trabalho
+    const tipoTrabalhoIcon = {
+      'Home Office': 'house-fill',
+      'Presencial': 'building-fill',
+      'Híbrido': 'laptop'
+    };
+    const icon = tipoTrabalhoIcon[v.tipoTrabalho] || 'briefcase-fill';
+
+    colDiv.innerHTML = `
+      <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h5 class="card-title mb-0 text-success fw-bold">${escapeHTML(v.titulo)}</h5>
+            <span class="badge bg-${badgeColor}">${escapeHTML(v.tipo)}</span>
+          </div>
+          
+          <h6 class="card-subtitle mb-3 text-muted">
+            <i class="bi bi-building"></i> ${escapeHTML(v.empresa)}
+          </h6>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                <small>${escapeHTML(v.cidade)}</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-clock-fill text-primary me-2"></i>
+                <small>${escapeHTML(v.turno || '—')}</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-${icon} text-success me-2"></i>
+                <small>${escapeHTML(v.tipoTrabalho || 'Presencial')}</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-cash-stack text-warning me-2"></i>
+                <small class="fw-bold">${escapeHTML(v.salario || '—')}</small>
+              </div>
+            </div>
+          </div>
+
+          <p class="card-text text-muted mb-3">
+            ${truncate(v.descricao, 120)}
+          </p>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-success btn-sm flex-grow-1" onclick="abrirModal(${index})">
+              <i class="bi bi-eye"></i> Ver Detalhes
+            </button>
+            <button class="btn btn-success btn-sm" onclick="candidatarVaga(${index})">
+              <i class="bi bi-send-fill"></i> Candidatar
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(colDiv);
+  });
+}
+
+// Função para abrir modal com detalhes completos
+function abrirModal(index) {
+  vagaAtualIndex = index; // Salva o índice para usar na candidatura
+  const v = todasAsVagas[index]; // Usa a variável global com todas as vagas
+  const modal = new bootstrap.Modal(document.getElementById('vagaModal'));
+  
+  document.getElementById('modalTitulo').textContent = v.titulo;
+  
+  document.getElementById('modalBody').innerHTML = `
+    <div class="row g-3">
+      <div class="col-md-6">
+        <h6 class="text-success"><i class="bi bi-building"></i> Empresa</h6>
+        <p>${escapeHTML(v.empresa)}</p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="text-success"><i class="bi bi-tag-fill"></i> Tipo de Contrato</h6>
+        <p><span class="badge bg-primary">${escapeHTML(v.tipo)}</span></p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="text-success"><i class="bi bi-geo-alt-fill"></i> Localização</h6>
+        <p>${escapeHTML(v.cidade)}</p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="text-success"><i class="bi bi-cash-stack"></i> Salário</h6>
+        <p class="fw-bold">${escapeHTML(v.salario || '—')}</p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="text-success"><i class="bi bi-clock-fill"></i> Turno</h6>
+        <p>${escapeHTML(v.turno || '—')}</p>
+      </div>
+      <div class="col-md-6">
+        <h6 class="text-success"><i class="bi bi-laptop"></i> Tipo de Trabalho</h6>
+        <p>${escapeHTML(v.tipoTrabalho || 'Presencial')}</p>
+      </div>
+      <div class="col-12">
+        <h6 class="text-success"><i class="bi bi-gift-fill"></i> Benefícios</h6>
+        <p>${escapeHTML(v.beneficios || 'Vale transporte, Vale alimentação')}</p>
+      </div>
+      <div class="col-12">
+        <h6 class="text-success"><i class="bi bi-file-text-fill"></i> Descrição da Vaga</h6>
+        <p>${escapeHTML(v.descricao)}</p>
+      </div>
+      <div class="col-12">
+        <h6 class="text-success"><i class="bi bi-briefcase-fill"></i> Área</h6>
+        <p><span class="badge bg-info">${escapeHTML(v.area)}</span></p>
+      </div>
+    </div>
+  `;
+  
+  modal.show();
+}
+
+// Função para mostrar toast de notificação
+function showToast(message) {
+  const toastEl = document.getElementById('vagaToast');
+  const toastBody = document.getElementById('toastMessage');
+  toastBody.textContent = message;
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
+
+// Variável global para armazenar índice da vaga atual
+let vagaAtualIndex = null;
+// Variável global para armazenar todas as vagas (estáticas + empresas)
+let todasAsVagas = [];
+
+// Função para candidatar a vaga (verificando login)
+function candidatarVaga(index) {
+  // Verifica se o usuário está logado
+  const user = JSON.parse(localStorage.getItem('userLogado') || 'null');
+  
+  if (!user || !user.email) {
+    // Usuário não está logado - mostra erro
+    const alertHTML = `
+      <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3" 
+           role="alert" style="z-index: 9999; min-width: 300px;">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        <strong>Acesso negado!</strong> Você precisa fazer login para se candidatar às vagas.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', alertHTML);
+    
+    // Remove alert automaticamente após 5 segundos
+    setTimeout(() => {
+      const alert = document.querySelector('.alert');
+      if (alert) alert.remove();
+    }, 5000);
+    
+    // Redireciona para login após 2 segundos
+    setTimeout(() => {
+      window.location.href = 'pages/auth/login.html';
+    }, 2000);
+    
+    return;
+  }
+  
+  // Usuário está logado - abre modal de confirmação
+  vagaAtualIndex = index;
+  const modal = new bootstrap.Modal(document.getElementById('confirmacaoModal'));
+  modal.show();
+}
+
+// Função para candidatar vaga via modal de detalhes
+function candidatarVagaModal() {
+  if (vagaAtualIndex !== null) {
+    candidatarVaga(vagaAtualIndex);
+  }
+}
+
+// Função para redirecionar ao perfil
+function irParaPerfil() {
+  bootstrap.Modal.getInstance(document.getElementById('confirmacaoModal')).hide();
+  window.location.href = 'pages/aluno/perfil-aluno.html';
+}
+
+// Função para enviar candidatura
+function enviarCandidatura() {
+  // Busca vaga da lista global já mesclada
+  const vaga = todasAsVagas[vagaAtualIndex];
+  
+  // Busca dados do aluno logado
+  const userLogado = JSON.parse(localStorage.getItem('userLogado') || '{}');
+  const perfilAluno = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+  
+  // Salva candidatura no localStorage com dados completos
+  let candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+  candidaturas.push({
+    vagaId: vaga.id,
+    vagaTitulo: vaga.titulo || vaga.cargo,
+    vagaEmpresa: vaga.empresa || vaga.nomeEmpresa,
+    nomeAluno: perfilAluno.nome || userLogado.nome || 'Candidato',
+    emailAluno: userLogado.email || '',
+    telefoneAluno: perfilAluno.telefone || '',
+    faculdadeAluno: perfilAluno.faculdade || '',
+    cursoAluno: perfilAluno.curso || '',
+    dataCandidatura: new Date().toISOString(),
+    status: 'enviada'
+  });
+  localStorage.setItem('candidaturas', JSON.stringify(candidaturas));
+  
+  // Fecha modal de confirmação
+  bootstrap.Modal.getInstance(document.getElementById('confirmacaoModal')).hide();
+  
+  // Mostra toast de sucesso
+  const successHTML = `
+    <div class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3" 
+         role="alert" style="z-index: 9999; min-width: 300px;">
+      <i class="bi bi-check-circle-fill"></i>
+      <strong>Candidatura enviada!</strong> Sua candidatura para ${vaga.titulo} foi enviada com sucesso.
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', successHTML);
+  
+  // Remove alert automaticamente após 5 segundos
+  setTimeout(() => {
+    const alert = document.querySelector('.alert-success');
+    if (alert) alert.remove();
+  }, 5000);
+  
+  vagaAtualIndex = null;
+}
+
+/* ===============================
+        SUGGESTION ACTIONS
+   =============================== */
+function aplicarRegiaoSugestao(label) {
+  // Se clicar “Remote/Worldwide/Brazil/LATAM…”, ajusta cidade para aquela sugestão
+  cidadeEl.value = label;
+  handleFiltroChange();
+}
+function aplicarCategoriaSugestao(label) {
+  // Ajusta área para a categoria sugerida
+  areaEl.value = label;
+  handleFiltroChange();
+}
+function limparCidade() {
+  cidadeEl.value = '';
+  handleFiltroChange();
+}
+function limparArea() {
+  areaEl.value = '';
+  handleFiltroChange();
+}
+function limparTurno() {
+  turnoEl.value = '';
+  handleFiltroChange();
+}
+
+/* ===============================
+        EVENTS
+   =============================== */
+function handleFiltroChange() {
+  cidadeAtual = (cidadeEl && cidadeEl.value || '').trim();
+  areaAtual   = (areaEl   && areaEl.value   || '').trim();
+  turnoAtual  = (turnoEl  && turnoEl.value  || '').trim();
+  updateHeaderLabels();
+  updateUrl();
+  carregarVagas();
+}
+
+cidadeEl.addEventListener('change', handleFiltroChange);
+areaEl.addEventListener('change', handleFiltroChange);
+turnoEl.addEventListener('change', handleFiltroChange);
+
+function login() { 
+  window.location.href = 'pages/auth/login.html'; 
+}
+
+function deslogarNav() {
+  if (confirm('Deseja realmente sair?')) {
+    localStorage.removeItem('userLogado');
+    window.location.reload();
+  }
+}
+
+// Verifica se usuário está logado ao carregar página
+function verificarLogin() {
+  const user = JSON.parse(localStorage.getItem('userLogado') || 'null');
+  const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+  
+  if (user && user.email) {
+    // Usuário está logado - mostra dropdown
+    document.getElementById('btnLogin').classList.add('d-none');
+    document.getElementById('userDropdown').classList.remove('d-none');
+    document.getElementById('nomeUsuarioNav').textContent = perfil.nome || user.nome || 'Usuário';
+  }
+}
+
+/* ===============================
+        START
+   =============================== */
+verificarLogin();
+carregarVagas();
+</script>
+
+<!-- Bootstrap 5 JS Bundle (inclui Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+/* Estilos adicionais para melhorar a integração do Bootstrap */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-left: 4px solid #10b981;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2) !important;
+}
+
+.navbar {
+    border-bottom: 3px solid #10b981;
+}
+
+.form-select:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.card-title {
+    font-size: 1.1rem;
+}
+
+.badge {
+    font-weight: 600;
+    padding: 0.4em 0.8em;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+</style>
+
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processando Login - Workifs</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        .loading-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            gap: 20px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <div class="loading-text">Processando seu login...</div>
+    </div>
+
+    <script>
+        // OAuth Callback Handler
+        (function() {
+            try {
+                // Recupera o state salvo
+                const savedState = sessionStorage.getItem('oauth_state');
+                if (!savedState) {
+                    throw new Error('State não encontrado. Possível ataque CSRF.');
+                }
+
+                // Verifica se é callback do Google (usa hash fragment)
+                if (window.location.hash) {
+                    handleGoogleCallback();
+                } 
+                // Verifica se é callback do GitHub (usa query params)
+                else if (window.location.search) {
+                    handleGithubCallback();
+                } else {
+                    throw new Error('Callback inválido');
+                }
+
+            } catch (error) {
+                console.error('Erro no OAuth callback:', error);
+                alert('Erro ao processar login social. Tente novamente.');
+                window.location.href = 'login.html';
+            }
+        })();
+
+        function handleGoogleCallback() {
+            // Google retorna tokens no hash fragment (#)
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            
+            const accessToken = params.get('access_token');
+            const idToken = params.get('id_token');
+            const state = params.get('state');
+            
+            if (!accessToken || !idToken) {
+                throw new Error('Tokens não recebidos do Google');
+            }
+
+            // Valida o state
+            validateState(state, 'google');
+
+            // Decodifica o ID Token (JWT) para obter informações do usuário
+            const userInfo = parseJWT(idToken);
+            
+            // Busca ou cria conta do aluno
+            const contasAlunos = JSON.parse(localStorage.getItem('contasAlunos') || '[]');
+            let conta = contasAlunos.find(c => c.email === userInfo.email);
+            
+            if (!conta) {
+                // Cria nova conta com dados do Google
+                conta = {
+                    nome: userInfo.name || userInfo.email.split('@')[0],
+                    email: userInfo.email,
+                    senha: 'oauth_' + Math.random().toString(36).substring(2, 15),
+                    dataCadastro: new Date().toISOString(),
+                    oauthProvider: 'google',
+                    picture: userInfo.picture || ''
+                };
+                
+                contasAlunos.push(conta);
+                localStorage.setItem('contasAlunos', JSON.stringify(contasAlunos));
+            }
+            
+            // Faz login do usuário
+            localStorage.setItem('userLogado', JSON.stringify({ 
+                email: conta.email, 
+                tipo: 'aluno',
+                nome: conta.nome,
+                foto: userInfo.picture || ''
+            }));
+            
+            // Redireciona para vagas
+            window.location.href = 'vagas.html';
+        }
+
+        async function handleGithubCallback() {
+            // GitHub retorna code nos query params
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            const state = params.get('state');
+            
+            if (!code) {
+                throw new Error('Código não recebido do GitHub');
+            }
+
+            // Valida o state
+            validateState(state, 'github');
+
+            // NOTA: Em produção, você deve trocar o 'code' por um access_token
+            // através do seu backend (por segurança, não exponha o client_secret no frontend)
+            // Por enquanto, vamos simular o processo:
+            
+            try {
+                // Aqui você faria uma chamada para seu backend:
+                // const response = await fetch('/api/auth/github', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ code })
+                // });
+                // const data = await response.json();
+                
+                // Simulação para desenvolvimento:
+                const userData = {
+                    email: 'usuario@github.com', // Viria da API do GitHub
+                    nome: 'Usuário GitHub',       // Viria da API do GitHub
+                    foto: '',                      // Viria da API do GitHub
+                    tipo: 'aluno',
+                    provider: 'github',
+                    code: code // Temporário para desenvolvimento
+                };
+
+                localStorage.setItem('userLogado', JSON.stringify(userData));
+                
+                // Redireciona para o perfil
+                window.location.href = 'perfil-aluno/home.html';
+                
+            } catch (error) {
+                console.error('Erro ao processar GitHub OAuth:', error);
+                throw error;
+            }
+        }
+
+        function validateState(receivedState, expectedProvider) {
+            const savedState = sessionStorage.getItem('oauth_state');
+            
+            if (!savedState) {
+                throw new Error('State não encontrado');
+            }
+
+            try {
+                const decodedState = JSON.parse(atob(receivedState));
+                const savedStateObj = JSON.parse(savedState);
+                
+                if (decodedState.provider !== expectedProvider) {
+                    throw new Error('Provider não corresponde');
+                }
+                
+                if (decodedState.nonce !== savedStateObj.nonce) {
+                    throw new Error('Nonce não corresponde');
+                }
+                
+                // Verifica se o state não está muito antigo (5 minutos)
+                const maxAge = 5 * 60 * 1000;
+                if (Date.now() - decodedState.timestamp > maxAge) {
+                    throw new Error('State expirado');
+                }
+                
+                // Limpa o state após validação
+                sessionStorage.removeItem('oauth_state');
+                
+            } catch (error) {
+                throw new Error('Validação de state falhou: ' + error.message);
+            }
+        }
+
+        function parseJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                throw new Error('Erro ao decodificar JWT: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertas - Workifs Empresa</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="home-empresa.html">
+                <img src="../../assets/images/logo.png" alt="Logo Workifs" height="46">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home-empresa.html">Minhas Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="alertas-empresa.html">Alertas</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="nomeEmpresaNav">Empresa</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="perfil-empresa.html">Editar Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="deslogarEmpresa()">Deslogar</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-success mb-4">
+                    <i class="bi bi-bell"></i> Candidaturas Recentes
+                </h3>
+
+                <!-- Lista de alertas -->
+                <div id="listaAlertas">
+                    <!-- Alertas serão inseridos aqui via JavaScript -->
+                </div>
+
+                <!-- Mensagem quando não há alertas -->
+                <div id="semAlertas" class="text-center py-5" style="display: none;">
+                    <i class="bi bi-bell-slash text-muted" style="font-size: 4rem;"></i>
+                    <p class="text-muted mt-3">Nenhuma candidatura recente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verifica login
+        function verificarLogin() {
+            const empresa = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+            if (!empresa || !empresa.email) {
+                window.location.href = '../auth/login-empresa.html';
+                return false;
+            }
+            
+            const perfil = JSON.parse(localStorage.getItem('perfilEmpresa') || '{}');
+            const nomeEmpresa = perfil.nomeEmpresa || empresa.nomeEmpresa || 'Empresa';
+            document.getElementById('nomeEmpresaNav').textContent = nomeEmpresa;
+            return true;
+        }
+
+        function deslogarEmpresa() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('empresaLogada');
+                window.location.href = '../../index.html';
+            }
+        }
+
+        function carregarAlertas() {
+            const candidaturas = JSON.parse(localStorage.getItem('candidaturas') || '[]');
+            const vagasEmpresa = JSON.parse(localStorage.getItem('vagasEmpresa') || '[]');
+            
+            // Filtra candidaturas das vagas desta empresa
+            const idsVagasEmpresa = vagasEmpresa.map(v => v.id);
+            const candidaturasEmpresa = candidaturas.filter(c => idsVagasEmpresa.includes(c.vagaId));
+            
+            // Ordena por data (mais recente primeiro)
+            candidaturasEmpresa.sort((a, b) => new Date(b.dataCandidatura) - new Date(a.dataCandidatura));
+
+            const container = document.getElementById('listaAlertas');
+            const semAlertas = document.getElementById('semAlertas');
+
+            if (candidaturasEmpresa.length === 0) {
+                container.innerHTML = '';
+                semAlertas.style.display = 'block';
+                return;
+            }
+
+            semAlertas.style.display = 'none';
+            
+            let html = '';
+            candidaturasEmpresa.forEach(candidatura => {
+                const vaga = vagasEmpresa.find(v => v.id === candidatura.vagaId);
+                const dataFormatada = new Date(candidatura.dataCandidatura).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const tempoDecorrido = calcularTempoDecorrido(candidatura.dataCandidatura);
+
+                html += `
+                    <div class="card mb-3 shadow-sm hover-card">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-1 text-center">
+                                    <i class="bi bi-person-circle text-success" style="font-size: 2.5rem;"></i>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="mb-1">${candidatura.nomeAluno}</h6>
+                                    <p class="mb-1 text-muted small">
+                                        Se candidatou para: <strong>${vaga ? vaga.cargo : 'Vaga'}</strong>
+                                    </p>
+                                    <p class="mb-0 text-muted small">
+                                        <i class="bi bi-clock"></i> ${tempoDecorrido} - ${dataFormatada}
+                                    </p>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button class="btn btn-sm btn-outline-success" onclick="verPerfilAluno('${candidatura.emailAluno}')">
+                                        <i class="bi bi-eye"></i> Ver Currículo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function calcularTempoDecorrido(data) {
+            const agora = new Date();
+            const dataPassada = new Date(data);
+            const diffMs = agora - dataPassada;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHoras = Math.floor(diffMs / 3600000);
+            const diffDias = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Agora mesmo';
+            if (diffMins < 60) return `${diffMins} minuto${diffMins > 1 ? 's' : ''} atrás`;
+            if (diffHoras < 24) return `${diffHoras} hora${diffHoras > 1 ? 's' : ''} atrás`;
+            if (diffDias === 1) return 'Ontem';
+            if (diffDias < 7) return `${diffDias} dias atrás`;
+            return 'Há mais de uma semana';
+        }
+
+        function verPerfilAluno(emailAluno) {
+            window.location.href = `visualizar-curriculo.html?email=${encodeURIComponent(emailAluno)}`;
+        }
+
+        // Inicializa
+        if (verificarLogin()) {
+            carregarAlertas();
+        }
+    </script>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

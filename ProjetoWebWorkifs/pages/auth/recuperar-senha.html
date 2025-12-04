@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha - Workifs</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body class="login-page">
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+    
+    <div class="login-container">
+        <img src="../../assets/images/logo.png" alt="Logo Workifs" class="logo-login">
+        
+        <h3 class="text-center text-success mb-2">Recuperar Senha</h3>
+        <p class="text-center text-muted mb-4">Digite seu email e enviaremos instruções para redefinir sua senha</p>
+        
+        <form class="login-form" id="formRecuperar" onsubmit="recuperarSenha(event)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="text-center d-block">Tipo de Conta</label>
+                <div class="d-flex gap-3 justify-content-center align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipoConta" id="tipoAluno" value="aluno" checked>
+                        <label class="form-check-label" for="tipoAluno" style="margin-top: 9px;">
+                            Aluno
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="tipoConta" id="tipoEmpresa" value="empresa">
+                        <label class="form-check-label" for="tipoEmpresa" style="margin-top:9px;">
+                            Empresa
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="botoes-container">
+                <button type="button" class="botao-secundario" onclick="window.location.href='login.html'">Cancelar</button>
+                <button type="submit" class="botao-primario">Enviar</button>
+            </div>
+        </form>
+
+        <!-- Área de redefinição (aparece após encontrar email) -->
+        <form class="login-form d-none" id="formRedefinir" onsubmit="redefinirSenha(event)">
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Email encontrado! Defina sua nova senha:
+            </div>
+
+            <div class="form-group">
+                <label for="novaSenha">Nova Senha</label>
+                <div class="password-input">
+                    <input type="password" id="novaSenha" class="form-control" placeholder="Mínimo 6 caracteres" required minlength="6">
+                    <button type="button" class="show-password" onclick="togglePassword('novaSenha')">Show</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmarNovaSenha">Confirmar Nova Senha</label>
+                <div class="password-input">
+                    <input type="password" id="confirmarNovaSenha" class="form-control" placeholder="Repita a senha" required minlength="6">
+                    <button type="button" class="show-password" onclick="togglePassword('confirmarNovaSenha')">Show</button>
+                </div>
+            </div>
+
+            <div class="botoes-container">
+                <button type="button" class="botao-secundario" onclick="cancelarRedefinicao()">Cancelar</button>
+                <button type="submit" class="botao-primario">Redefinir Senha</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Toast de Sucesso -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastSucesso" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    Senha redefinida com sucesso!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let emailEncontrado = '';
+        let tipoContaEncontrada = '';
+
+        function togglePassword(fieldId) {
+            const input = document.getElementById(fieldId);
+            const btn = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function recuperarSenha(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const tipoConta = document.querySelector('input[name="tipoConta"]:checked').value;
+
+            // Busca nas contas correspondentes
+            if (tipoConta === 'aluno') {
+                const contasAlunos = JSON.parse(localStorage.getItem('contasAlunos') || '[]');
+                const contaEncontrada = contasAlunos.find(conta => conta.email === email);
+                
+                if (contaEncontrada) {
+                    emailEncontrado = email;
+                    tipoContaEncontrada = 'aluno';
+                    mostrarFormularioRedefinicao();
+                } else {
+                    alert('Email não encontrado nos registros de alunos.');
+                }
+            } else {
+                const contasEmpresas = JSON.parse(localStorage.getItem('contasEmpresas') || '[]');
+                const contaEncontrada = contasEmpresas.find(conta => conta.email === email);
+                
+                if (contaEncontrada) {
+                    emailEncontrado = email;
+                    tipoContaEncontrada = 'empresa';
+                    mostrarFormularioRedefinicao();
+                } else {
+                    alert('Email não encontrado nos registros de empresas.');
+                }
+            }
+        }
+
+        function mostrarFormularioRedefinicao() {
+            document.getElementById('formRecuperar').classList.add('d-none');
+            document.getElementById('formRedefinir').classList.remove('d-none');
+        }
+
+        function cancelarRedefinicao() {
+            document.getElementById('formRedefinir').classList.add('d-none');
+            document.getElementById('formRecuperar').classList.remove('d-none');
+            document.getElementById('email').value = '';
+            emailEncontrado = '';
+            tipoContaEncontrada = '';
+        }
+
+        function redefinirSenha(event) {
+            event.preventDefault();
+            
+            const novaSenha = document.getElementById('novaSenha').value;
+            const confirmarNovaSenha = document.getElementById('confirmarNovaSenha').value;
+
+            if (novaSenha !== confirmarNovaSenha) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+
+            // Atualiza a senha no localStorage
+            if (tipoContaEncontrada === 'aluno') {
+                const contasAlunos = JSON.parse(localStorage.getItem('contasAlunos') || '[]');
+                const index = contasAlunos.findIndex(conta => conta.email === emailEncontrado);
+                
+                if (index !== -1) {
+                    contasAlunos[index].senha = novaSenha;
+                    localStorage.setItem('contasAlunos', JSON.stringify(contasAlunos));
+                }
+            } else {
+                const contasEmpresas = JSON.parse(localStorage.getItem('contasEmpresas') || '[]');
+                const index = contasEmpresas.findIndex(conta => conta.email === emailEncontrado);
+                
+                if (index !== -1) {
+                    contasEmpresas[index].senha = novaSenha;
+                    localStorage.setItem('contasEmpresas', JSON.stringify(contasEmpresas));
+                }
+            }
+
+            // Mostra toast de sucesso
+            const toastElement = document.getElementById('toastSucesso');
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+
+            // Redireciona após 2 segundos
+            setTimeout(() => {
+                if (tipoContaEncontrada === 'aluno') {
+                    window.location.href = 'login.html';
+                } else {
+                    window.location.href = 'login-empresa.html';
+                }
+            }, 2000);
+        }
+    </script>
+    
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

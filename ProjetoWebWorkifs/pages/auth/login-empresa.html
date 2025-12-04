@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Empresa - Workifs</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/style.css">
+</head>
+<body class="login-page">
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+    
+    <div class="login-container">
+        <img src="../../assets/images/logo.png" alt="Logo Workifs" class="logo-login">
+        
+        <h3 class="text-center text-success mb-4">Login Empresa</h3>
+        
+        <form class="login-form" onsubmit="fazerLoginEmpresa(event)">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="empresa@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="password-input">
+                    <input type="password" id="senha" class="form-control" placeholder="Senha" required>
+                    <button type="button" class="show-password" onclick="togglePassword()">Show</button>
+                </div>
+            </div>
+
+            <div class="links-container">
+                <a href="cadastro-empresa.html" class="link-secundario">Não possuo conta</a>
+                <a href="recuperar-senha.html" class="link-secundario">Esqueci minha senha</a>
+            </div>
+
+            <div class="botoes-container">
+                <button type="button" class="botao-secundario" onclick="window.location.href='../../index.html'">Cancelar</button>
+                <button type="submit" class="botao-primario">Entrar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Migração automática de dados antigos
+        (function migrarDadosAntigos() {
+            // Migra contaEmpresa para contasEmpresas
+            const contaEmpresa = JSON.parse(localStorage.getItem('contaEmpresa') || 'null');
+            if (contaEmpresa) {
+                const contasEmpresas = JSON.parse(localStorage.getItem('contasEmpresas') || '[]');
+                if (!contasEmpresas.some(c => c.email === contaEmpresa.email)) {
+                    contasEmpresas.push(contaEmpresa);
+                    localStorage.setItem('contasEmpresas', JSON.stringify(contasEmpresas));
+                }
+                localStorage.removeItem('contaEmpresa');
+            }
+        })();
+
+        function togglePassword() {
+            const senhaInput = document.getElementById('senha');
+            const btn = document.querySelector('.show-password');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                senhaInput.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function fazerLoginEmpresa(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            // Busca todas as contas cadastradas (suporta múltiplas empresas)
+            const contasEmpresas = JSON.parse(localStorage.getItem('contasEmpresas') || '[]');
+            
+            // Verifica se existe uma conta com esse email e senha
+            const contaEncontrada = contasEmpresas.find(conta => 
+                conta.email === email && conta.senha === senha
+            );
+            
+            if (contaEncontrada) {
+                // Login bem-sucedido
+                localStorage.setItem('empresaLogada', JSON.stringify({ 
+                    email: email, 
+                    tipo: 'empresa',
+                    nomeEmpresa: contaEncontrada.nomeEmpresa || 'Empresa'
+                }));
+                window.location.href = '../empresa/home-empresa.html';
+            } else {
+                // Login falhou
+                alert('Email ou senha incorretos!');
+            }
+        }
+    </script>
+    
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workifs - Portal de Vagas</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <!-- Barra verde no topo -->
+    <div class="barra-verde-topo"></div>
+
+    <!-- Navbar Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/images/logo.png" alt="Logo Workifs" height="46" onclick="window.location.href='index.html'">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="ms-auto">
+                    <!-- Botão Login (visível se não logado) -->
+                    <button class="btn btn-success" id="btnLogin" onclick="irParaLogin()">
+                        Login
+                    </button>
+                    
+                    <!-- Dropdown do usuário (visível se logado) -->
+                    <div class="dropdown d-none" id="userDropdown">
+                        <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <span id="nomeUsuario">Usuário</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" id="linkPerfil">Meu Perfil</a></li>
+                            <li><a class="dropdown-item" href="vagas.html">Buscar Vagas</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="deslogar()">Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Carrossel Bootstrap tela início -->
+    <div id="carouselWorkifs" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselWorkifs" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#carouselWorkifs" data-bs-slide-to="1"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="assets/images/yorkifs1.png" class="d-block w-100" alt="Banner 1">
+            </div>
+            <div class="carousel-item">
+                <img src="assets/images/yorkifs2.png" class="d-block w-100" alt="Banner 2">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselWorkifs" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselWorkifs" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button>
+    </div>
+
+    <!-- Filtro de busca com Bootstrap -->
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-4">
+                        <h3 class="text-center mb-4 text-success fw-bold">
+                            Encontre sua Oportunidade
+                        </h3>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="Cidade" class="form-label fw-semibold">
+                                    Cidade
+                                </label>
+                                <select class="form-select" id="Cidade">
+                                    <option value="">Selecione a cidade</option>
+                                    <option value="Curitiba">Curitiba</option>
+                                    <option value="Pinhais">Pinhais</option>
+                                    <option value="São Jose dos Pinhais">São Jose dos Pinhais</option>
+                                    <option value="Araucária">Araucária</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="area" class="form-label fw-semibold">
+                                    Área de Interesse
+                                </label>
+                                <select class="form-select" id="area">
+                                    <option value="">Selecione a área</option>
+                                    <option value="Tecnologia">Tecnologia</option>
+                                    <option value="Saúde">Saúde</option>
+                                    <option value="Finanças">Finanças</option>
+                                    <option value="Engenharia">Engenharia</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <button class="btn btn-success w-100 py-3 fw-bold" onclick="buscarVagas()">
+                                    Buscar Vagas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verifica se usuário está logado ao carregar a página
+        window.addEventListener('DOMContentLoaded', function() {
+            verificarLogin();
+        });
+
+        function verificarLogin() {
+            const userLogado = JSON.parse(localStorage.getItem('userLogado') || 'null');
+            const empresaLogada = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+            
+            const btnLogin = document.getElementById('btnLogin');
+            const userDropdown = document.getElementById('userDropdown');
+            const linkPerfil = document.getElementById('linkPerfil');
+            
+            if (userLogado && userLogado.email) {
+                // Aluno logado
+                btnLogin.classList.add('d-none');
+                userDropdown.classList.remove('d-none');
+                
+                const perfil = JSON.parse(localStorage.getItem('perfilAluno') || '{}');
+                document.getElementById('nomeUsuario').textContent = perfil.nome || userLogado.nome || 'Aluno';
+                linkPerfil.href = 'pages/aluno/perfil-aluno.html';
+            } else if (empresaLogada && empresaLogada.email) {
+                // Empresa logada
+                btnLogin.classList.add('d-none');
+                userDropdown.classList.remove('d-none');
+                
+                const perfil = JSON.parse(localStorage.getItem('perfilEmpresa') || '{}');
+                document.getElementById('nomeUsuario').textContent = perfil.nomeEmpresa || empresaLogada.nomeEmpresa || 'Empresa';
+                linkPerfil.href = 'pages/empresa/home-empresa.html';
+                linkPerfil.textContent = 'Dashboard';
+            }
+        }
+
+        function deslogar() {
+            if (confirm('Deseja realmente sair?')) {
+                const userLogado = JSON.parse(localStorage.getItem('userLogado') || 'null');
+                const empresaLogada = JSON.parse(localStorage.getItem('empresaLogada') || 'null');
+                
+                // Remove apenas o tipo de conta que está logada
+                if (userLogado && userLogado.email) {
+                    localStorage.removeItem('userLogado');
+                } else if (empresaLogada && empresaLogada.email) {
+                    localStorage.removeItem('empresaLogada');
+                }
+                
+                window.location.reload();
+            }
+        }
+
+        // Navegação
+        function irParaLogin() {
+            window.location.href = 'pages/auth/login.html';
+        }
+
+        function buscarVagas() {
+            const cidade = document.getElementById('Cidade').value;
+            const area = document.getElementById('area').value;
+
+            if (!cidade || !area) {
+                // Toast de Bootstrap para validação
+                const toastHTML = `
+                    <div class="toast align-items-center text-white bg-warning border-0 position-fixed bottom-0 end-0 m-3" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                Selecione cidade e área de interesse!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', toastHTML);
+                const toastEl = document.querySelector('.toast');
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+                setTimeout(() => toastEl.remove(), 5000);
+                return;
+            }
+
+            window.location.href = `./vagas.html?cidade=${encodeURIComponent(cidade)}&area=${encodeURIComponent(area)}`;
+        }
+    </script>
+    
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
