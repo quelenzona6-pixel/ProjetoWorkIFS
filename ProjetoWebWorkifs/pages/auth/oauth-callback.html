@@ -52,15 +52,11 @@
                     throw new Error('State não encontrado. Possível ataque CSRF.');
                 }
 
-                // Verifica se é callback do Google (usa hash fragment)
+                // Processa callback do Google
                 if (window.location.hash) {
                     handleGoogleCallback();
-                } 
-                // Verifica se é callback do GitHub (usa query params)
-                else if (window.location.search) {
-                    handleGithubCallback();
                 } else {
-                    throw new Error('Callback inválido');
+                    throw new Error('Callback inválido - nenhum token recebido');
                 }
 
             } catch (error) {
@@ -117,54 +113,7 @@
             }));
             
             // Redireciona para vagas
-            window.location.href = 'vagas.html';
-        }
-
-        async function handleGithubCallback() {
-            // GitHub retorna code nos query params
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get('code');
-            const state = params.get('state');
-            
-            if (!code) {
-                throw new Error('Código não recebido do GitHub');
-            }
-
-            // Valida o state
-            validateState(state, 'github');
-
-            // NOTA: Em produção, você deve trocar o 'code' por um access_token
-            // através do seu backend (por segurança, não exponha o client_secret no frontend)
-            // Por enquanto, vamos simular o processo:
-            
-            try {
-                // Aqui você faria uma chamada para seu backend:
-                // const response = await fetch('/api/auth/github', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ code })
-                // });
-                // const data = await response.json();
-                
-                // Simulação para desenvolvimento:
-                const userData = {
-                    email: 'usuario@github.com', // Viria da API do GitHub
-                    nome: 'Usuário GitHub',       // Viria da API do GitHub
-                    foto: '',                      // Viria da API do GitHub
-                    tipo: 'aluno',
-                    provider: 'github',
-                    code: code // Temporário para desenvolvimento
-                };
-
-                localStorage.setItem('userLogado', JSON.stringify(userData));
-                
-                // Redireciona para o perfil
-                window.location.href = 'perfil-aluno/home.html';
-                
-            } catch (error) {
-                console.error('Erro ao processar GitHub OAuth:', error);
-                throw error;
-            }
+            window.location.href = '../../vagas.html';
         }
 
         function validateState(receivedState, expectedProvider) {
